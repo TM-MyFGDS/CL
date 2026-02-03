@@ -4,6 +4,7 @@ import { Button } from '@/app/components/ui/button';
 import { Checkbox } from '@/app/components/ui/checkbox';
 import { Label } from '@/app/components/ui/label';
 import { DoorOpen, CheckCircle } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface CheckoutConfirmationProps {
   open: boolean;
@@ -12,6 +13,7 @@ interface CheckoutConfirmationProps {
 }
 
 export function CheckoutConfirmation({ open, onClose, onConfirm }: CheckoutConfirmationProps) {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checklist, setChecklist] = useState({
     keys: false,
@@ -48,17 +50,15 @@ export function CheckoutConfirmation({ open, onClose, onConfirm }: CheckoutConfi
             <div className="p-2 bg-coral-100 dark:bg-coral-900/30 rounded-lg">
               <DoorOpen className="h-6 w-6 text-coral-600 dark:text-coral-400" />
             </div>
-            <DialogTitle className="text-2xl">Check-out Bevestigen</DialogTitle>
+            <DialogTitle className="text-2xl">{t('checkoutConfirm.title')}</DialogTitle>
           </div>
           <DialogDescription id="checkout-confirmation-description" className="text-sm text-muted-foreground">
-            Weet je zeker dat je wilt uitchecken?
+            {t('checkoutConfirm.description')}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <p className="text-sm text-muted-foreground mb-4">
-            Controleer of je de volgende zaken hebt afgerond:
-          </p>
+          <p className="text-sm text-muted-foreground mb-4">{t('checkoutConfirm.prompt')}</p>
 
           {/* Checklist */}
           <div className="space-y-4">
@@ -69,7 +69,7 @@ export function CheckoutConfirmation({ open, onClose, onConfirm }: CheckoutConfi
                 onCheckedChange={(checked) => setChecklist(prev => ({ ...prev, keys: !!checked }))}
               />
               <Label htmlFor="keys" className="text-sm leading-relaxed cursor-pointer flex-1">
-                Ik heb de sleutels teruggelegd op de afgesproken plek
+                {t('checkoutConfirm.checklist.keys')}
               </Label>
             </div>
 
@@ -80,7 +80,7 @@ export function CheckoutConfirmation({ open, onClose, onConfirm }: CheckoutConfi
                 onCheckedChange={(checked) => setChecklist(prev => ({ ...prev, windows: !!checked }))}
               />
               <Label htmlFor="windows" className="text-sm leading-relaxed cursor-pointer flex-1">
-                Ik heb alle ramen en deuren gesloten
+                {t('checkoutConfirm.checklist.windows')}
               </Label>
             </div>
 
@@ -91,7 +91,7 @@ export function CheckoutConfirmation({ open, onClose, onConfirm }: CheckoutConfi
                 onCheckedChange={(checked) => setChecklist(prev => ({ ...prev, trash: !!checked }))}
               />
               <Label htmlFor="trash" className="text-sm leading-relaxed cursor-pointer flex-1">
-                Ik heb het afval buitengezet (indien van toepassing)
+                {t('checkoutConfirm.checklist.trash')}
               </Label>
             </div>
           </div>
@@ -104,7 +104,7 @@ export function CheckoutConfirmation({ open, onClose, onConfirm }: CheckoutConfi
               className="w-full h-12 bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 disabled:opacity-50"
             >
               <CheckCircle className="h-5 w-5 mr-2" />
-              {isSubmitting ? 'Bezig...' : 'BEVESTIG CHECK-OUT'}
+              {isSubmitting ? t('checkoutConfirm.confirming') : t('checkoutConfirm.confirm')}
             </Button>
 
             <Button
@@ -113,7 +113,7 @@ export function CheckoutConfirmation({ open, onClose, onConfirm }: CheckoutConfi
               disabled={isSubmitting}
               className="w-full"
             >
-              Annuleren
+              {t('checkoutConfirm.cancel')}
             </Button>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/lib/i18n';
 import { Globe } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import {
@@ -9,17 +9,17 @@ import {
 } from '@/app/components/ui/dropdown-menu';
 
 export function LanguageSwitcher() {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
   };
 
   const languages = [
-    { code: 'en', name: 'English', shortName: 'EN' },
-    { code: 'fr', name: 'Français', shortName: 'FR' },
-    { code: 'nl', name: 'Nederlands', shortName: 'NL' },
-    { code: 'es', name: 'Español', shortName: 'ES' },
+    { code: 'en', name: t('language.english'), shortName: 'EN' },
+    { code: 'fr', name: t('language.french'), shortName: 'FR' },
+    { code: 'nl', name: t('language.dutch'), shortName: 'NL' },
+    { code: 'es', name: t('language.spanish'), shortName: 'ES' },
   ];
 
   // Get base language code (e.g., 'en' from 'en-US')
@@ -32,7 +32,7 @@ export function LanguageSwitcher() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="h-9 w-9 px-0">
           <Globe className="h-4 w-4" />
-          <span className="sr-only">Change language</span>
+          <span className="sr-only">{t('languageSwitcher.changeLanguage')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

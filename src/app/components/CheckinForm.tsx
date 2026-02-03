@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/app/components/ui/dialog';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CheckCircle, Minus, Plus, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import type { CheckinData } from '@/types';
+import { useTranslation } from '@/lib/i18n';
 
 interface CheckinFormProps {
   open: boolean;
@@ -18,6 +19,7 @@ interface CheckinFormProps {
 }
 
 export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFormProps) {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<CheckinData>({
     firstName: '',
@@ -35,6 +37,23 @@ export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFo
     acceptedHouseRules: false,
   });
 
+  const countryOptions = useMemo(
+    () => [
+      { value: 'netherlands', label: t('checkinForm.country.netherlands') },
+      { value: 'belgium', label: t('checkinForm.country.belgium') },
+      { value: 'germany', label: t('checkinForm.country.germany') },
+      { value: 'france', label: t('checkinForm.country.france') },
+      { value: 'spain', label: t('checkinForm.country.spain') },
+      { value: 'uk', label: t('checkinForm.country.uk') },
+      { value: 'usa', label: t('checkinForm.country.usa') },
+      { value: 'other', label: t('checkinForm.country.other') },
+    ],
+    [t]
+  );
+
+  const getCountryLabel = (value: string) =>
+    countryOptions.find((option) => option.value === value)?.label ?? value;
+
   const handleInputChange = (field: keyof CheckinData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -45,21 +64,24 @@ export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFo
     // Validation
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.streetAddress || 
         !formData.postalCode || !formData.city || !formData.country || !formData.arrivalDate || !formData.departureDate) {
-      toast.error('Vul alle verplichte velden in');
+      toast.error(t('checkinForm.validationRequired'));
       return;
     }
 
     if (!formData.acceptedHouseRules) {
-      toast.error('Je moet akkoord gaan met de huisregels');
+      toast.error(t('checkinForm.validationAcceptRules'));
       return;
     }
 
     try {
       setIsSubmitting(true);
-      await onSubmit(formData);
+      await onSubmit({
+        ...formData,
+        country: getCountryLabel(formData.country)
+      });
     } catch (error) {
       console.error('Check-in error:', error);
-      toast.error('Check-in mislukt. Probeer het opnieuw.');
+      toast.error(t('checkinForm.errorSubmit'));
     } finally {
       setIsSubmitting(false);
     }
@@ -73,10 +95,10 @@ export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFo
             <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <DialogTitle className="text-2xl">Check-in Formulier</DialogTitle>
+            <DialogTitle className="text-2xl">{t('checkinForm.title')}</DialogTitle>
           </div>
           <DialogDescription id="checkin-form-description" className="text-sm text-muted-foreground">
-            Vul je gegevens in om in te checken bij {propertyName}
+            {t('checkinForm.description', { propertyName })}
           </DialogDescription>
         </DialogHeader>
 
@@ -84,29 +106,29 @@ export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFo
           {/* Guest Information Section */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold flex items-center gap-2">
-              📋 Gastgegevens
+              📋 {t('checkinForm.guestInfoTitle')}
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="firstName">Voornaam *</Label>
+                <Label htmlFor="firstName">{t('checkinForm.firstNameLabel')}</Label>
                 <Input
                   id="firstName"
                   value={formData.firstName}
                   onChange={(e) => handleInputChange('firstName', e.target.value)}
-                  placeholder="Sophie"
+                  placeholder={t('checkinForm.firstNamePlaceholder')}
                   className="h-[52px]"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="lastName">Achternaam *</Label>
+                <Label htmlFor="lastName">{t('checkinForm.lastNameLabel')}</Label>
                 <Input
                   id="lastName"
                   value={formData.lastName}
                   onChange={(e) => handleInputChange('lastName', e.target.value)}
-                  placeholder="de Vries"
+                  placeholder={t('checkinForm.lastNamePlaceholder')}
                   className="h-[52px]"
                   required
                 />
@@ -114,26 +136,26 @@ export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFo
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">E-mailadres *</Label>
+              <Label htmlFor="email">{t('checkinForm.emailLabel')}</Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
-                placeholder="sophie@email.com"
+                placeholder={t('checkinForm.emailPlaceholder')}
                 className="h-[52px]"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Telefoonnummer</Label>
+              <Label htmlFor="phone">{t('checkinForm.phoneLabel')}</Label>
               <Input
                 id="phone"
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
-                placeholder="+31 6 12345678"
+                placeholder={t('checkinForm.phonePlaceholder')}
                 className="h-[52px]"
               />
             </div>
@@ -142,16 +164,16 @@ export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFo
           {/* Address Section */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold flex items-center gap-2">
-              📍 Adresgegevens
+              📍 {t('checkinForm.addressTitle')}
             </h3>
 
             <div className="space-y-2">
-              <Label htmlFor="streetAddress">Straat + Huisnummer *</Label>
+              <Label htmlFor="streetAddress">{t('checkinForm.streetAddressLabel')}</Label>
               <Input
                 id="streetAddress"
                 value={formData.streetAddress}
                 onChange={(e) => handleInputChange('streetAddress', e.target.value)}
-                placeholder="Keizersgracht 123"
+                placeholder={t('checkinForm.streetAddressPlaceholder')}
                 className="h-[52px]"
                 required
               />
@@ -159,24 +181,24 @@ export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFo
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="postalCode">Postcode *</Label>
+                <Label htmlFor="postalCode">{t('checkinForm.postalCodeLabel')}</Label>
                 <Input
                   id="postalCode"
                   value={formData.postalCode}
                   onChange={(e) => handleInputChange('postalCode', e.target.value)}
-                  placeholder="1015 CJ"
+                  placeholder={t('checkinForm.postalCodePlaceholder')}
                   className="h-[52px]"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="city">Stad *</Label>
+                <Label htmlFor="city">{t('checkinForm.cityLabel')}</Label>
                 <Input
                   id="city"
                   value={formData.city}
                   onChange={(e) => handleInputChange('city', e.target.value)}
-                  placeholder="Amsterdam"
+                  placeholder={t('checkinForm.cityPlaceholder')}
                   className="h-[52px]"
                   required
                 />
@@ -184,20 +206,17 @@ export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFo
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="country">Land *</Label>
+              <Label htmlFor="country">{t('checkinForm.countryLabel')}</Label>
               <Select value={formData.country} onValueChange={(value) => handleInputChange('country', value)} required>
                 <SelectTrigger className="h-[52px]">
-                  <SelectValue placeholder="Selecteer land" />
+                  <SelectValue placeholder={t('checkinForm.countryPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Nederland">Nederland</SelectItem>
-                  <SelectItem value="België">België</SelectItem>
-                  <SelectItem value="Duitsland">Duitsland</SelectItem>
-                  <SelectItem value="Frankrijk">Frankrijk</SelectItem>
-                  <SelectItem value="Spanje">Spanje</SelectItem>
-                  <SelectItem value="Verenigd Koninkrijk">Verenigd Koninkrijk</SelectItem>
-                  <SelectItem value="Verenigde Staten">Verenigde Staten</SelectItem>
-                  <SelectItem value="Anders">Anders</SelectItem>
+                  {countryOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -206,7 +225,7 @@ export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFo
           {/* Number of Guests */}
           <div className="space-y-2">
             <h3 className="text-lg font-semibold flex items-center gap-2 mb-3">
-              👥 Aantal gasten
+              👥 {t('checkinForm.guestCountTitle')}
             </h3>
             <div className="flex items-center justify-center gap-4 bg-muted rounded-xl p-4">
               <Button
@@ -220,7 +239,7 @@ export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFo
                 <Minus className="h-4 w-4" />
               </Button>
               <span className="text-2xl font-semibold min-w-[120px] text-center">
-                {formData.numberOfGuests} {formData.numberOfGuests === 1 ? 'persoon' : 'personen'}
+                {t('checkinForm.guestCount', { count: formData.numberOfGuests })}
               </span>
               <Button
                 type="button"
@@ -237,12 +256,12 @@ export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFo
           {/* Stay Period */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold flex items-center gap-2">
-              📅 Verblijfsperiode
+              📅 {t('checkinForm.stayPeriodTitle')}
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="arrivalDate">Aankomst *</Label>
+                <Label htmlFor="arrivalDate">{t('checkinForm.arrivalLabel')}</Label>
                 <Input
                   id="arrivalDate"
                   type="date"
@@ -254,7 +273,7 @@ export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFo
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="departureDate">Vertrek *</Label>
+                <Label htmlFor="departureDate">{t('checkinForm.departureLabel')}</Label>
                 <Input
                   id="departureDate"
                   type="date"
@@ -271,12 +290,12 @@ export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFo
           {/* Comments */}
           <div className="space-y-2">
             <h3 className="text-lg font-semibold flex items-center gap-2">
-              💬 Opmerkingen (optioneel)
+              💬 {t('checkinForm.commentsTitle')}
             </h3>
             <Textarea
               value={formData.comments}
               onChange={(e) => handleInputChange('comments', e.target.value)}
-              placeholder="Eventuele bijzonderheden of vragen..."
+              placeholder={t('checkinForm.commentsPlaceholder')}
               className="min-h-[100px] resize-none"
             />
           </div>
@@ -290,7 +309,7 @@ export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFo
               required
             />
             <Label htmlFor="acceptRules" className="text-sm leading-relaxed cursor-pointer">
-              Ik ga akkoord met de huisregels van deze accommodatie en zal deze respecteren tijdens mijn verblijf.
+              {t('checkinForm.acceptRulesLabel')}
             </Label>
           </div>
 
@@ -301,7 +320,7 @@ export function CheckinForm({ open, onClose, onSubmit, propertyName }: CheckinFo
             className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 shadow-lg hover:shadow-xl transition-all"
           >
             <CheckCircle className="h-5 w-5 mr-2" />
-            {isSubmitting ? 'Bezig met inchecken...' : 'BEVESTIG CHECK-IN'}
+            {isSubmitting ? t('checkinForm.submitting') : t('checkinForm.submit')}
           </Button>
         </form>
       </DialogContent>

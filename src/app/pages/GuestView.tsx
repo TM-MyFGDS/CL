@@ -11,7 +11,7 @@ import {
 import { getPropertyByToken } from "@/lib/firestore";
 import type { Property } from "@/lib/firestore";
 import type { Booking } from '@/types';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/lib/i18n';
 import { LanguageSwitcher } from '@/app/components/LanguageSwitcher';
 import { ThemeToggle } from '@/app/components/ThemeToggle';
 import { HouseRulesAccordion } from '@/app/components/HouseRulesAccordion';
@@ -30,7 +30,8 @@ interface GuestViewProps {
 export default function GuestView({ previewData }: GuestViewProps = {}) {
   const { token } = useParams();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language;
 
   // Property state
   const [property, setProperty] = useState<Property | null>(null);
@@ -77,7 +78,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
 
   const loadPropertyData = async () => {
     if (!token) {
-      toast.error('Invalid guest link');
+      toast.error(t('guest.invalidLink'));
       navigate('/');
       return;
     }
@@ -87,7 +88,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
       const propertyData = await getPropertyByToken(token);
 
       if (!propertyData) {
-        toast.error('Property not found or link expired');
+        toast.error(t('guest.propertyNotFound'));
         navigate('/');
         return;
       }
@@ -97,7 +98,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
       // Load booking status
       await loadBookingStatus(propertyData.id);
     } catch (error: any) {
-      toast.error('Failed to load property information');
+      toast.error(t('guest.loadFailed'));
       console.error(error);
       navigate('/');
     } finally {
@@ -125,10 +126,10 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
       setCurrentBooking(booking);
       setShowCheckinForm(false);
       setShowCheckinSuccess(true);
-      toast.success('Check-in successful!');
+      toast.success(t('guest.checkinSuccess'));
     } catch (error: any) {
       console.error('Check-in error:', error);
-      toast.error(error.message || 'Check-in failed');
+      toast.error(t('guest.checkinFailed'));
       throw error;
     }
   };
@@ -141,10 +142,10 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
       setCurrentBooking(null);
       setShowCheckoutConfirm(false);
       setShowCheckoutSuccess(true);
-      toast.success('Check-out successful!');
+      toast.success(t('guest.checkoutSuccess'));
     } catch (error: any) {
       console.error('Check-out error:', error);
-      toast.error(error.message || 'Check-out failed');
+      toast.error(t('guest.checkoutFailed'));
       throw error;
     }
   };
@@ -156,16 +157,24 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
     const departureDate = new Date(currentBooking.departureDate);
     const diff = departureDate.getTime() - now.getTime();
 
-    if (diff < 0) return 'Check-out time passed';
+    if (diff < 0) return t('guest.checkoutTimePassed');
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
+    const dayUnit = t('guest.day', { count: days });
+    const hourUnit = t('guest.hour', { count: hours });
+
     if (days > 0) {
-      return `${days} ${days === 1 ? 'dag' : 'dagen'}, ${hours} ${hours === 1 ? 'uur' : 'uur'}`;
-    } else {
-      return `${hours} ${hours === 1 ? 'uur' : 'uur'}`;
+      return t('guest.timeRemainingWithDays', {
+        days,
+        hours,
+        dayUnit,
+        hourUnit
+      });
     }
+
+    return t('guest.timeRemainingHoursOnly', { hours, hourUnit });
   };
 
   if (loading) {
@@ -184,6 +193,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
   }
 
   const isCheckedIn = currentBooking && currentBooking.status === 'checked_in';
+  const hostFallbackInitial = t('hostMenu.hostFallback').charAt(0).toUpperCase();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-coral-50 via-white to-coral-100 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950">
@@ -218,7 +228,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                 <div className="bg-gradient-to-br from-coral-50 to-orange-50 dark:from-coral-950/30 dark:to-orange-950/30 p-8">
                   <div className="text-center">
                     <h2 className="text-2xl font-bold mb-2">
-                      🏠 Welkom bij
+                      🏠 {t('guest.welcomeHeading')}
                     </h2>
                     <h3 className="text-3xl font-bold mb-8 bg-gradient-to-r from-coral-500 to-coral-600 bg-clip-text text-transparent">
                       {property.name}
@@ -231,15 +241,15 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                     >
                       <MapPinIcon className="h-6 w-6 mr-3" />
                       <div className="text-left">
-                        <div className="text-xl">CHECK-IN</div>
-                        <div className="text-xs opacity-80 font-normal">Registreer je verblijf</div>
+                        <div className="text-xl">{t('guest.checkinCta')}</div>
+                        <div className="text-xs opacity-80 font-normal">{t('guest.checkinCtaSub')}</div>
                       </div>
                     </Button>
 
                     {property.checkInTime && (
                       <p className="mt-6 text-sm text-muted-foreground">
-                        Check-in tijd: {property.checkInTime}
-                        {property.checkInInfo?.checkOutTime && ` - Check-out: ${property.checkInInfo.checkOutTime}`}
+                        {t('guest.checkinTimeLabel')}: {property.checkInTime}
+                        {property.checkInInfo?.checkOutTime && ` - ${t('guest.checkoutTimeLabel')}: ${property.checkInInfo.checkOutTime}`}
                       </p>
                     )}
                   </div>
@@ -252,14 +262,16 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   <div className="flex items-center justify-between mb-4">
                     <Badge className="h-10 px-4 text-base bg-green-600 hover:bg-green-700">
                       <CheckCircle className="h-5 w-5 mr-2" />
-                      INGECHECKT
+                      {t('guest.checkedInBadge')}
                     </Badge>
                     <span className="text-sm text-muted-foreground">
-                      sinds {new Date(currentBooking.checkinTime).toLocaleDateString('nl-NL', {
-                        day: 'numeric',
-                        month: 'short',
-                        hour: '2-digit',
-                        minute: '2-digit'
+                      {t('guest.checkedInSince', {
+                        date: new Date(currentBooking.checkinTime).toLocaleDateString(locale, {
+                          day: 'numeric',
+                          month: 'short',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })
                       })}
                     </span>
                   </div>
@@ -267,17 +279,17 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   <div className="flex items-center gap-2 text-muted-foreground mb-4">
                     <Timer className="h-5 w-5" />
                     <span className="font-medium">
-                      Check-out over: <span className="text-foreground font-bold">{getTimeUntilCheckout()}</span>
+                      {t('guest.checkoutInLabel')}: <span className="text-foreground font-bold">{getTimeUntilCheckout()}</span>
                     </span>
                   </div>
 
                   <div className="text-sm text-muted-foreground">
-                    Vertrek: {new Date(currentBooking.departureDate).toLocaleDateString('nl-NL', {
+                    {t('guest.departureLabel')}: {new Date(currentBooking.departureDate).toLocaleDateString(locale, {
                       weekday: 'long',
                       day: 'numeric',
                       month: 'long'
                     })}
-                    {property.checkInInfo?.checkOutTime && ` • vóór ${property.checkInInfo.checkOutTime}`}
+                    {property.checkInInfo?.checkOutTime && ` • ${t('guest.departureBefore', { time: property.checkInInfo.checkOutTime })}`}
                   </div>
                 </div>
               </Card>
@@ -305,7 +317,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
             {/* Host Profile */}
             {property.hostProfile && (
               <div className="mb-6 pb-6 border-b border-border">
-                <p className="text-sm font-medium text-muted-foreground mb-3">Your Host</p>
+                <p className="text-sm font-medium text-muted-foreground mb-3">{t('guest.hostLabel')}</p>
                 <div className="flex items-start gap-4">
                   {property.hostProfile.avatarUrl ? (
                     <img
@@ -316,7 +328,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   ) : (
                     <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
                       <span className="text-2xl font-bold text-primary">
-                        {property.hostProfile.displayName?.charAt(0).toUpperCase() || 'H'}
+                        {property.hostProfile.displayName?.charAt(0).toUpperCase() || hostFallbackInitial}
                       </span>
                     </div>
                   )}
@@ -328,7 +340,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                     <div className="space-y-2 text-sm">
                       {property.hostProfile.email && (
                         <div className="flex items-center gap-2">
-                          <span className="text-muted-foreground">Email:</span>
+                          <span className="text-muted-foreground">{t('guest.hostEmailLabel')}:</span>
                           <a href={`mailto:${property.hostProfile.email}`} className="text-primary hover:underline">
                             {property.hostProfile.email}
                           </a>
@@ -336,7 +348,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                       )}
                       {property.hostProfile.phone && (
                         <div className="flex items-center gap-2">
-                          <span className="text-muted-foreground">Phone:</span>
+                          <span className="text-muted-foreground">{t('guest.hostPhoneLabel')}:</span>
                           <a href={`tel:${property.hostProfile.phone}`} className="text-primary hover:underline font-mono">
                             {property.hostProfile.phone}
                           </a>
@@ -350,7 +362,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-muted-foreground mb-1">Address</p>
+                <p className="text-muted-foreground mb-1">{t('guest.addressLabel')}</p>
                 <p className="font-medium">
                   {property.address.streetName} {property.address.houseNumber}<br />
                   {property.address.postalCode} {property.address.city}<br />
@@ -360,7 +372,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
             </div>
             {property.description && (
               <div className="mt-4 pt-4 border-t border-border">
-                <p className="text-muted-foreground mb-2">Description</p>
+                <p className="text-muted-foreground mb-2">{t('guest.descriptionLabel')}</p>
                 <p className="text-foreground leading-relaxed">{property.description}</p>
               </div>
             )}
@@ -379,7 +391,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   <div className="p-3 bg-primary rounded-lg">
                     <KeyRound className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-xl">Check-in / Check-out</CardTitle>
+                  <CardTitle className="text-xl">{t('guest.checkInOutTitle')}</CardTitle>
                 </div>
                 <ChevronDown
                   className={`h-6 w-6 text-muted-foreground transition-transform duration-200 ${checkInOpen ? 'transform rotate-180' : ''
@@ -392,7 +404,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   {property.checkInTime && (
                     <div>
-                      <p className="text-sm text-muted-foreground mb-1">Check-in Time</p>
+                      <p className="text-sm text-muted-foreground mb-1">{t('guest.checkinTimeTitle')}</p>
                       <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded">
                         <Clock className="h-4 w-4 text-muted-foreground" />
                         <span className="font-medium">{property.checkInTime}</span>
@@ -401,7 +413,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   )}
                   {property.checkInInfo?.checkOutTime && (
                     <div>
-                      <p className="text-sm text-muted-foreground mb-1">Check-out Time</p>
+                      <p className="text-sm text-muted-foreground mb-1">{t('guest.checkoutTimeTitle')}</p>
                       <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded">
                         <Clock className="h-4 w-4 text-muted-foreground" />
                         <span className="font-medium">{property.checkInInfo.checkOutTime}</span>
@@ -431,7 +443,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   <div className="p-3 bg-primary rounded-lg">
                     <KeyRound className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-xl">Key Code</CardTitle>
+                  <CardTitle className="text-xl">{t('guest.keyCodeTitle')}</CardTitle>
                 </div>
                 <ChevronDown
                   className={`h-6 w-6 text-muted-foreground transition-transform duration-200 ${keyCodeOpen ? 'transform rotate-180' : ''
@@ -475,7 +487,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   <div className="p-3 bg-primary rounded-lg">
                     <ShieldAlert className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-xl">Alarm Code</CardTitle>
+                  <CardTitle className="text-xl">{t('guest.alarmCodeTitle')}</CardTitle>
                 </div>
                 <ChevronDown
                   className={`h-6 w-6 text-muted-foreground transition-transform duration-200 ${alarmCodeOpen ? 'transform rotate-180' : ''
@@ -519,7 +531,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   <div className="p-3 bg-primary rounded-lg">
                     <Wifi className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-xl">WiFi Access</CardTitle>
+                  <CardTitle className="text-xl">{t('guest.wifiTitle')}</CardTitle>
                 </div>
                 <ChevronDown
                   className={`h-6 w-6 text-muted-foreground transition-transform duration-200 ${wifiOpen ? 'transform rotate-180' : ''
@@ -531,12 +543,12 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
               <CardContent className="pt-6">
                 <div className="space-y-3">
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">Network Name</p>
+                    <p className="text-sm text-muted-foreground mb-1">{t('guest.wifiNetworkLabel')}</p>
                     <p className="font-mono font-medium bg-muted px-3 py-2 rounded">{property.wifiNetwork}</p>
                   </div>
                   {property.wifiPassword && (
                     <div>
-                      <p className="text-sm text-muted-foreground mb-1">Password</p>
+                      <p className="text-sm text-muted-foreground mb-1">{t('guest.wifiPasswordLabel')}</p>
                       <p className="font-mono font-medium bg-muted px-3 py-2 rounded">{property.wifiPassword}</p>
                     </div>
                   )}
@@ -558,7 +570,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   <div className="p-3 bg-primary rounded-lg">
                     <Car className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-xl">Parking Instructions</CardTitle>
+                  <CardTitle className="text-xl">{t('guest.parkingTitle')}</CardTitle>
                 </div>
                 <ChevronDown
                   className={`h-6 w-6 text-muted-foreground transition-transform duration-200 ${parkingOpen ? 'transform rotate-180' : ''
@@ -590,7 +602,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   <div className="p-3 bg-primary rounded-lg">
                     <FileText className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-xl">House Rules</CardTitle>
+                  <CardTitle className="text-xl">{t('guest.houseRulesTitle')}</CardTitle>
                 </div>
                 <ChevronDown
                   className={`h-6 w-6 text-muted-foreground transition-transform duration-200 ${houseRulesOpen ? 'transform rotate-180' : ''
@@ -622,7 +634,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   <div className="p-3 bg-primary rounded-lg">
                     <Phone className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-xl">Emergency Contacts</CardTitle>
+                  <CardTitle className="text-xl">{t('guest.emergencyContactsTitle')}</CardTitle>
                 </div>
                 <ChevronDown
                   className={`h-6 w-6 text-muted-foreground transition-transform duration-200 ${emergencyOpen ? 'transform rotate-180' : ''
@@ -661,7 +673,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   <div className="p-3 bg-primary rounded-lg">
                     <MapPin className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-xl">Local Tips & Recommendations</CardTitle>
+                  <CardTitle className="text-xl">{t('guest.localTipsTitle')}</CardTitle>
                 </div>
                 <ChevronDown
                   className={`h-6 w-6 text-muted-foreground transition-transform duration-200 ${localTipsOpen ? 'transform rotate-180' : ''
@@ -693,7 +705,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   <div className="p-3 bg-primary rounded-lg">
                     <UtensilsCrossed className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-xl">Restaurants</CardTitle>
+                  <CardTitle className="text-xl">{t('guest.restaurantsTitle')}</CardTitle>
                 </div>
                 <ChevronDown
                   className={`h-6 w-6 text-muted-foreground transition-transform duration-200 ${restaurantsOpen ? 'transform rotate-180' : ''
@@ -731,7 +743,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   <div className="p-3 bg-primary rounded-lg">
                     <ShoppingCart className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-xl">Supermarkets</CardTitle>
+                  <CardTitle className="text-xl">{t('guest.supermarketsTitle')}</CardTitle>
                 </div>
                 <ChevronDown
                   className={`h-6 w-6 text-muted-foreground transition-transform duration-200 ${supermarketsOpen ? 'transform rotate-180' : ''
@@ -766,7 +778,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   <div className="p-3 bg-primary rounded-lg">
                     <Coffee className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-xl">Bars & Cafes</CardTitle>
+                  <CardTitle className="text-xl">{t('guest.barsTitle')}</CardTitle>
                 </div>
                 <ChevronDown
                   className={`h-6 w-6 text-muted-foreground transition-transform duration-200 ${barsOpen ? 'transform rotate-180' : ''
@@ -801,7 +813,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   <div className="p-3 bg-primary rounded-lg">
                     <MapPinned className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-xl">Points of Interest / Attractions</CardTitle>
+                  <CardTitle className="text-xl">{t('guest.pointsOfInterestTitle')}</CardTitle>
                 </div>
                 <ChevronDown
                   className={`h-6 w-6 text-muted-foreground transition-transform duration-200 ${poisOpen ? 'transform rotate-180' : ''
@@ -839,7 +851,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                   <div className="p-3 bg-primary rounded-lg">
                     <Cross className="h-6 w-6 text-white" />
                   </div>
-                  <CardTitle className="text-xl">Medical Contacts</CardTitle>
+                  <CardTitle className="text-xl">{t('guest.medicalContactsTitle')}</CardTitle>
                 </div>
                 <ChevronDown
                   className={`h-6 w-6 text-muted-foreground transition-transform duration-200 ${medicalOpen ? 'transform rotate-180' : ''
@@ -872,7 +884,7 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
           <Card className="mb-8 overflow-hidden border-2 border-coral-200 dark:border-coral-800 shadow-xl">
             <div className="bg-gradient-to-br from-coral-50 to-orange-50 dark:from-coral-950/30 dark:to-orange-950/30 p-6">
               <div className="text-center">
-                <h3 className="text-xl font-semibold mb-4">Klaar om te vertrekken?</h3>
+                <h3 className="text-xl font-semibold mb-4">{t('guest.checkoutReadyTitle')}</h3>
                 <Button
                   onClick={() => setShowCheckoutConfirm(true)}
                   variant="outline"
@@ -880,13 +892,13 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
                 >
                   <DoorOpen className="h-5 w-5 mr-2" />
                   <div className="text-left">
-                    <div className="text-lg">CHECK-OUT</div>
-                    <div className="text-xs opacity-70 font-normal">Vertrek registreren</div>
+                    <div className="text-lg">{t('guest.checkoutCta')}</div>
+                    <div className="text-xs opacity-70 font-normal">{t('guest.checkoutCtaSub')}</div>
                   </div>
                 </Button>
                 {property.checkInInfo?.checkOutTime && (
                   <p className="mt-4 text-sm text-muted-foreground">
-                    Check-out tijd: vóór {property.checkInInfo.checkOutTime}
+                    {t('guest.checkoutTimeBefore', { time: property.checkInInfo.checkOutTime })}
                   </p>
                 )}
               </div>
@@ -897,10 +909,10 @@ export default function GuestView({ previewData }: GuestViewProps = {}) {
         {/* Footer */}
         <div className="mt-12 pt-8 border-t border-border text-center">
           <p className="text-sm text-muted-foreground mb-2">
-            Have questions? Contact your host
+            {t('guest.footerQuestions')}
           </p>
           <p className="text-xs text-muted-foreground">
-            Powered by CheckinLynk • One link. All guest information. Share once and relax.
+            {t('guest.footerPoweredBy')}
           </p>
         </div>
       </main>

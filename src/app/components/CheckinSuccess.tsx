@@ -1,7 +1,8 @@
 import { Dialog, DialogContent, DialogDescription } from '@/app/components/ui/dialog';
 import { Button } from '@/app/components/ui/button';
-import { CheckCircle, BookOpen, Home } from 'lucide-react';
+import { CheckCircle, Home } from 'lucide-react';
 import type { Booking } from '@/types';
+import { useTranslation } from '@/lib/i18n';
 
 interface CheckinSuccessProps {
   open: boolean;
@@ -10,23 +11,25 @@ interface CheckinSuccessProps {
 }
 
 export function CheckinSuccess({ open, onClose, booking }: CheckinSuccessProps) {
+  const { t, i18n } = useTranslation();
+
   if (!booking) return null;
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
+    return date.toLocaleDateString(i18n.language, { day: 'numeric', month: 'short' });
   };
 
   const formatTime = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md" aria-describedby="checkin-success-description">
+        <DialogContent className="max-w-md" aria-describedby="checkin-success-description">
         <DialogDescription id="checkin-success-description" className="sr-only">
-          Check-in succesvol voltooid
+          {t('checkinSuccess.srDescription')}
         </DialogDescription>
         <div className="text-center py-6">
           {/* Success Icon */}
@@ -35,9 +38,9 @@ export function CheckinSuccess({ open, onClose, booking }: CheckinSuccessProps) 
           </div>
 
           {/* Success Message */}
-          <h2 className="text-2xl font-bold mb-2">Check-in Geslaagd!</h2>
+          <h2 className="text-2xl font-bold mb-2">{t('checkinSuccess.title')}</h2>
           <p className="text-muted-foreground mb-6">
-            Je bent nu ingecheckt bij<br />
+            {t('checkinSuccess.message')}<br />
             <span className="font-semibold text-foreground">{booking.propertyName}</span>
           </p>
 
@@ -51,11 +54,11 @@ export function CheckinSuccess({ open, onClose, booking }: CheckinSuccessProps) 
             </div>
             <div className="flex items-center gap-3 text-sm">
               <span>👥</span>
-              <span>{booking.numberOfGuests} {booking.numberOfGuests === 1 ? 'gast' : 'gasten'}</span>
+              <span>{t('checkinSuccess.guests', { count: booking.numberOfGuests })}</span>
             </div>
             <div className="flex items-center gap-3 text-sm">
               <span>🕐</span>
-              <span>Ingecheckt om {formatTime(booking.checkinTime)}</span>
+              <span>{t('checkinSuccess.checkedInAt', { time: formatTime(booking.checkinTime) })}</span>
             </div>
           </div>
 
@@ -66,7 +69,7 @@ export function CheckinSuccess({ open, onClose, booking }: CheckinSuccessProps) 
               className="w-full h-12 bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700"
             >
               <Home className="h-5 w-5 mr-2" />
-              NAAR HOME
+              {t('checkinSuccess.ctaHome')}
             </Button>
           </div>
         </div>

@@ -53,13 +53,13 @@ export function HostAvatarDropdown({
     if (userEmail) {
       return userEmail.slice(0, 2).toUpperCase();
     }
-    return 'H';
+    return t('hostMenu.hostFallback').charAt(0).toUpperCase();
   };
 
   const handleLogout = async () => {
     try {
       await auth.signOut();
-      toast.success('Uitgelogd');
+      toast.success(t('hostMenu.logoutSuccess'));
       setSheetOpen(false);
       if (onLogout) {
         onLogout();
@@ -68,11 +68,11 @@ export function HostAvatarDropdown({
       }
     } catch (error) {
       console.error('Logout error:', error);
-      toast.error('Uitloggen mislukt');
+      toast.error(t('hostMenu.logoutError'));
     }
   };
 
-  const displayName = userName || userEmail?.split('@')[0] || 'Host';
+  const displayName = userName || userEmail?.split('@')[0] || t('hostMenu.hostFallback');
   const displayEmail = userEmail || '';
 
   const avatarButton = (
@@ -137,7 +137,7 @@ export function HostAvatarDropdown({
           className="text-[13px] text-coral-600 hover:text-coral-700 dark:text-coral-500 
                    dark:hover:text-coral-400 hover:underline transition-colors"
         >
-          Profiel bekijken
+          {t('hostMenu.viewProfile')}
         </button>
       </div>
 
@@ -155,7 +155,7 @@ export function HostAvatarDropdown({
         >
           <UserCircle className="h-6 w-6 text-gray-600 dark:text-gray-400" />
           <span className="text-[14px] text-gray-900 dark:text-white">
-            Profielinstellingen
+            {t('hostMenu.profileSettings')}
           </span>
         </button>
 
@@ -169,7 +169,7 @@ export function HostAvatarDropdown({
         >
           <Camera className="h-6 w-6 text-gray-600 dark:text-gray-400" />
           <div className="flex items-center gap-2 flex-1">
-            <span className="text-[14px] text-gray-900 dark:text-white">Foto uploaden</span>
+            <span className="text-[14px] text-gray-900 dark:text-white">{t('hostMenu.uploadPhoto')}</span>
             {!avatarUrl && (
               <div className="h-1.5 w-1.5 rounded-full bg-orange-500" />
             )}
@@ -187,7 +187,7 @@ export function HostAvatarDropdown({
           <Globe className="h-6 w-6 text-gray-600 dark:text-gray-400" />
           <div className="flex-1 min-w-0">
             <div className="text-[14px] text-gray-900 dark:text-white">
-              Talen & communicatie
+              {t('hostMenu.languages')}
             </div>
           </div>
         </button>
@@ -203,7 +203,7 @@ export function HostAvatarDropdown({
         >
           <SettingsIcon className="h-6 w-6 text-gray-600 dark:text-gray-400" />
           <span className="text-[14px] text-gray-900 dark:text-white">
-            Accountinstellingen
+            {t('hostMenu.accountSettings')}
           </span>
         </button>
 
@@ -212,7 +212,7 @@ export function HostAvatarDropdown({
                    hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
         >
           <HelpCircle className="h-6 w-6 text-gray-600 dark:text-gray-400" />
-          <span className="text-[14px] text-gray-900 dark:text-white">Helppagina</span>
+          <span className="text-[14px] text-gray-900 dark:text-white">{t('hostMenu.helpPage')}</span>
         </button>
 
         <button
@@ -221,7 +221,7 @@ export function HostAvatarDropdown({
           onClick={handleLogout}
         >
           <LogOut className="h-6 w-6 text-red-600 dark:text-red-500" />
-          <span className="text-[14px] text-red-600 dark:text-red-500">Uitloggen</span>
+          <span className="text-[14px] text-red-600 dark:text-red-500">{t('hostMenu.logout')}</span>
         </button>
       </div>
     </>
