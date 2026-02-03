@@ -36,7 +36,7 @@ export default function CreateProperty() {
     e.preventDefault();
 
     if (!user) {
-      toast.error('You must be logged in to create a property');
+      toast.error(t('property.create.errors.notAuthenticated'));
       navigate('/');
       return;
     }
@@ -44,7 +44,7 @@ export default function CreateProperty() {
     // Validate address fields
     if (!formData.address.streetName || !formData.address.houseNumber ||
       !formData.address.postalCode || !formData.address.country) {
-      toast.error('Please fill in all address fields');
+      toast.error(t('property.create.errors.missingAddress'));
       return;
     }
 
@@ -61,10 +61,10 @@ export default function CreateProperty() {
         houseRules: DEFAULT_HOUSE_RULES,
       });
 
-      toast.success('Property created successfully!');
+      toast.success(t('property.create.success'));
       navigate(`/properties/${propertyId}`);
     } catch (error: any) {
-      toast.error('Failed to create property: ' + error.message);
+      toast.error(t('property.create.errors.failed', { message: error.message }));
       console.error(error);
     } finally {
       setLoading(false);
@@ -120,7 +120,7 @@ export default function CreateProperty() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl mb-2">{t('property.createNew')}</h1>
-          <p className="text-muted-foreground">Create a unique guest link for your vacation rental</p>
+          <p className="text-muted-foreground">{t('property.create.subtitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -136,7 +136,7 @@ export default function CreateProperty() {
                     <div className="relative">
                       <img
                         src={imagePreview}
-                        alt="Property preview"
+                        alt={t('property.create.imagePreviewAlt')}
                         className="max-h-64 mx-auto rounded-lg"
                       />
                       <Button
@@ -149,7 +149,7 @@ export default function CreateProperty() {
                           setImagePreview(null);
                         }}
                       >
-                        Change Photo
+                        {t('property.create.changePhoto')}
                       </Button>
                     </div>
                   ) : (
@@ -159,10 +159,10 @@ export default function CreateProperty() {
                       </div>
                       <div>
                         <p className="text-primary font-medium">
-                          Click to upload
+                          {t('property.create.uploadCta')}
                         </p>
                         <p className="text-sm text-muted-foreground mt-2">
-                          PNG, JPG up to 10MB
+                          {t('property.create.uploadHint')}
                         </p>
                       </div>
                     </div>

@@ -1,6 +1,34 @@
 import i18n from 'i18next';
 import { initReactI18next, useTranslation } from 'react-i18next';
 
+const DEFAULT_LANGUAGE = 'en';
+const LANGUAGE_STORAGE_KEY = 'cl_language';
+
+const normalizeLanguage = (language?: string | null) => {
+  if (!language) {
+    return null;
+  }
+  return language.split('-')[0];
+};
+
+const getStoredLanguage = () => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  return normalizeLanguage(window.localStorage.getItem(LANGUAGE_STORAGE_KEY));
+};
+
+const getDetectedLanguage = () => {
+  if (typeof navigator === 'undefined') {
+    return null;
+  }
+  return normalizeLanguage(navigator.language);
+};
+
+const getInitialLanguage = () => {
+  return getStoredLanguage() ?? getDetectedLanguage() ?? DEFAULT_LANGUAGE;
+};
+
 // Translation resources
 const resources = {
   en: {
@@ -348,13 +376,11 @@ const resources = {
 
       // Landing Page - Final CTA
       "landing.finalCta.title": "Less messages. More peace.",
-      "landing.finalCta.subtitle": "Better guest experience.",
-      "landing.finalCta.description": "Join hundreds of hosts who professionally share their guest information with CheckinLynk",
-      "landing.finalCta.cta": "Start free",
-      "landing.finalCta.login": "Log in",
-      "landing.finalCta.securePayment": "Secure payment via Polar",
-      "landing.finalCta.gdpr": "GDPR-ready",
-      "landing.finalCta.support": "Support within 24h",
+      "landing.finalCta.titleHighlight": "Better guest experience.",
+      "landing.finalCta.subtitle": "Join hundreds of hosts who professionally share their guest information with CheckinLynk",
+      "landing.finalCta.feature1": "Secure payment via Polar",
+      "landing.finalCta.feature2": "GDPR-ready",
+      "landing.finalCta.feature3": "Support within 24h",
 
       // Landing Page - Footer
       "landing.footer.tagline": "One link for all guest information. More professional. Simpler. Better.",
@@ -366,7 +392,250 @@ const resources = {
       "landing.footer.terms": "Terms",
       "landing.footer.account": "Account",
       "landing.footer.support": "Support",
-      "landing.footer.copyright": "© 2025 CheckinLynk. All rights reserved."
+      "landing.footer.copyright": "© 2025 CheckinLynk. All rights reserved.",
+
+      // Common - Extended
+      "common.preview": "Preview",
+      "common.saving": "Saving...",
+      "common.settings": "Settings",
+      "common.address": "Address",
+      "common.description": "Description",
+      "common.emailLabel": "Email:",
+      "common.phoneLabel": "Phone:",
+      "common.day_one": "day",
+      "common.day_other": "days",
+      "common.hour_one": "hour",
+      "common.hour_other": "hours",
+
+      // Language Switcher
+      "languageSwitcher.changeLanguage": "Change language",
+
+      // Host
+      "host.defaultName": "Host",
+      "host.defaultInitial": "H",
+      "host.avatar.logoutSuccess": "Signed out",
+      "host.avatar.logoutFailed": "Sign out failed",
+      "host.avatar.viewProfile": "View profile",
+      "host.avatar.profileSettings": "Profile settings",
+      "host.avatar.uploadPhoto": "Upload photo",
+      "host.avatar.languagesCommunication": "Languages & communication",
+      "host.avatar.help": "Help center",
+      "host.avatar.logout": "Sign out",
+
+      // Property Detail
+      "property.detail.notFound": "Property not found",
+      "property.detail.previewGuestView": "Preview Guest View",
+      "property.detail.backToEditMode": "Back To Edit Mode",
+      "property.detail.copyGuestLink": "Copy Guest Link",
+      "property.detail.regenerateLink": "Regenerate Link",
+      "property.detail.shareLinkHelp": "Share this secure link with your guests. You can regenerate it anytime for security.",
+      "property.detail.tabs.details": "Property Details",
+      "property.detail.tabs.detailsShort": "Details",
+      "property.detail.tabs.guestInfo": "Guest Info",
+      "property.detail.tabs.guestInfoShort": "Info",
+      "property.detail.tabs.houseRules": "House Rules",
+      "property.detail.tabs.houseRulesShort": "Rules",
+      "property.detail.basicInformation": "Basic Information",
+      "property.detail.checkInOut": "Check-in / Check-out",
+      "property.detail.checkInTimePlaceholder": "Check-in Time (e.g., 3:00 PM)",
+      "property.detail.checkOutTimePlaceholder": "Check-out Time (e.g., 11:00 AM)",
+      "property.detail.keyCode": "Key Code",
+      "property.detail.alarmCode": "Alarm Code",
+      "property.detail.checkInInstructionsPlaceholder": "Check-in Instructions (optional)",
+      "property.detail.wifiInformation": "WiFi Information",
+      "property.detail.networkNamePlaceholder": "Network Name (SSID)",
+      "property.detail.parking": "Parking",
+      "property.detail.parkingAddressPlaceholder": "Parking Address / Location",
+      "property.detail.parkingFree": "Free",
+      "property.detail.parkingPaid": "Paid",
+      "property.detail.emergencyContacts": "Emergency Contacts",
+      "property.detail.houseRules": "House Rules",
+      "property.detail.success.updated": "Property updated successfully!",
+      "property.detail.success.linkRegenerated": "Guest link regenerated successfully!",
+      "property.detail.errors.notFound": "Property not found",
+      "property.detail.errors.loadFailed": "Failed to load property: {{message}}",
+      "property.detail.errors.updateFailed": "Failed to update property: {{message}}",
+      "property.detail.errors.copyFailed": "Failed to copy link",
+      "property.detail.errors.regenerateFailed": "Failed to regenerate link: {{message}}",
+      "property.detail.errors.profileUpdateFailed": "Failed to update profile: {{message}}",
+
+      // Property Create
+      "property.create.subtitle": "Create a unique guest link for your vacation rental",
+      "property.create.imagePreviewAlt": "Property preview",
+      "property.create.changePhoto": "Change Photo",
+      "property.create.uploadCta": "Click to upload",
+      "property.create.uploadHint": "PNG, JPG up to 10MB",
+      "property.create.success": "Property created successfully!",
+      "property.create.errors.notAuthenticated": "You must be logged in to create a property",
+      "property.create.errors.missingAddress": "Please fill in all address fields",
+      "property.create.errors.failed": "Failed to create property: {{message}}",
+
+      // Guest Dashboard
+      "guest.dashboard.guestCount": "{{count}} guests",
+      "guest.dashboard.noBlocks": "No information blocks available yet",
+      "guest.dashboard.contactHost": "Have questions? Contact your host",
+      "guest.dashboard.poweredBy": "Powered by CheckinLynk",
+
+      // Guest View
+      "guestView.errors.invalidLink": "Invalid guest link",
+      "guestView.errors.propertyNotFound": "Property not found or link expired",
+      "guestView.errors.loadFailed": "Failed to load property information",
+      "guestView.checkInSuccess": "Check-in successful!",
+      "guestView.checkInFailed": "Check-in failed",
+      "guestView.checkOutSuccess": "Check-out successful!",
+      "guestView.checkOutFailed": "Check-out failed",
+      "guestView.checkOutTimePassed": "Check-out time passed",
+      "guestView.timeRemainingWithDays": "{{days}} {{dayLabel}}, {{hours}} {{hourLabel}}",
+      "guestView.timeRemainingHours": "{{hours}} {{hourLabel}}",
+      "guestView.welcomeTitle": "🏠 Welcome to",
+      "guestView.checkInCtaTitle": "CHECK-IN",
+      "guestView.checkInCtaSubtitle": "Register your stay",
+      "guestView.checkInTimeLabel": "Check-in time: {{time}}",
+      "guestView.checkOutTimeLabel": "Check-out: {{time}}",
+      "guestView.checkedInBadge": "CHECKED IN",
+      "guestView.checkedInSince": "since {{date}}",
+      "guestView.checkOutCountdownLabel": "Check-out in:",
+      "guestView.departureLabel": "Departure: {{date}}",
+      "guestView.departureBefore": "before {{time}}",
+      "guestView.yourHost": "Your Host",
+      "guestView.checkInOutTitle": "Check-in / Check-out",
+      "guestView.checkInTime": "Check-in Time",
+      "guestView.checkOutTime": "Check-out Time",
+      "guestView.keyCodeTitle": "Key Code",
+      "guestView.alarmCodeTitle": "Alarm Code",
+      "guestView.wifiAccessTitle": "WiFi Access",
+      "guestView.networkName": "Network Name",
+      "guestView.parkingInstructionsTitle": "Parking Instructions",
+      "guestView.houseRulesTitle": "House Rules",
+      "guestView.emergencyContactsTitle": "Emergency Contacts",
+      "guestView.localTipsTitle": "Local Tips & Recommendations",
+      "guestView.restaurantsTitle": "Restaurants",
+      "guestView.supermarketsTitle": "Supermarkets",
+      "guestView.barsTitle": "Bars & Cafes",
+      "guestView.pointsOfInterestTitle": "Points of Interest / Attractions",
+      "guestView.medicalContactsTitle": "Medical Contacts",
+      "guestView.readyToLeave": "Ready to leave?",
+      "guestView.checkOutCtaTitle": "CHECK-OUT",
+      "guestView.checkOutCtaSubtitle": "Register your departure",
+      "guestView.checkOutBefore": "Check-out time: before {{time}}",
+      "guestView.footerPoweredBy": "Powered by CheckinLynk • {{tagline}}",
+
+      // Not Found
+      "notFound.title": "Page Not Found",
+      "notFound.description": "The page you're looking for doesn't exist or has been moved.",
+      "notFound.backHome": "Back to Home",
+
+      // Auth Errors
+      "auth.errors.unableToSignIn": "Unable to sign in",
+      "auth.errors.signInHelp": "Please check your email and password, or create a new account if you haven't registered yet.",
+      "auth.errors.signInFailed": "Sign in failed",
+
+      // Language Selection Modal
+      "language.other": "Other",
+      "languageSelection.title": "Languages & communication",
+      "languageSelection.description": "Select the languages you speak so guests know how you can communicate",
+      "languageSelection.subtitle": "Guests see which languages you speak",
+      "languageSelection.errors.selectOne": "Select at least one language",
+      "languageSelection.errors.enterOther": "Enter the other language",
+      "languageSelection.success": "Languages saved",
+      "languageSelection.noneSelected": "No languages selected",
+      "languageSelection.twoSelected": "{{first}} and {{second}}",
+      "languageSelection.multipleSelected": "{{list}} and {{last}}",
+      "languageSelection.selectedTitle": "Selected languages",
+      "languageSelection.selectAll": "Select all languages you speak",
+      "languageSelection.otherLabel": "Which other language do you speak?",
+      "languageSelection.otherPlaceholder": "e.g. Polish, Russian, Arabic...",
+      "languageSelection.tip": "💡 Tip: Guests feel more welcome when they know you speak their language. This can also help with answering questions.",
+
+      // Dashboard
+      "dashboard.subtitle": "Overview of all your properties and their status",
+      "dashboard.status.occupied": "Occupied",
+      "dashboard.status.cleaning": "Cleaning",
+      "dashboard.status.vacant": "Vacant",
+      "dashboard.status.available": "Available",
+      "dashboard.status.cleaningRequired": "Cleaning required",
+      "dashboard.today": "Today",
+      "dashboard.todayCheckins": "in /",
+      "dashboard.todayCheckouts": "out",
+      "dashboard.addPropertyShort": "Add Property",
+      "dashboard.searchPlaceholder": "Search properties...",
+      "dashboard.empty.title": "No properties found",
+      "dashboard.empty.searchHint": "Try a different search term",
+      "dashboard.empty.addHint": "Start by adding your first vacation rental",
+      "dashboard.empty.addAction": "Add Your First Property",
+      "dashboard.errors.loadFailed": "Failed to load properties",
+      "dashboard.success.signedOut": "Signed out successfully",
+      "dashboard.errors.signOutFailed": "Failed to sign out",
+      "dashboard.success.deleted": "Property deleted successfully",
+      "dashboard.errors.deleteFailed": "Failed to delete property",
+      "dashboard.success.markedCleaned": "Property marked as cleaned",
+      "dashboard.errors.markCleanFailed": "Failed to mark property as cleaned",
+
+      // Landing Page - Additional
+      "landing.hero.statValue1": "80%",
+      "landing.hero.statValue2": "5 min",
+      "landing.hero.statValue3": "4.8★",
+      "landing.hero.cardWifiValue": "Sunshine_5G",
+      "landing.hero.cardRecommendationsCount": "{{count}} recommendations",
+      "landing.pricing.billingMonthly": "Monthly",
+      "landing.pricing.billingYearly": "Yearly",
+      "landing.pricing.mostPopular": "Most popular",
+      "landing.pricing.perMonth": "per month",
+      "landing.pricing.yearlyPrice": "(€{{price}} yearly)",
+      "landing.pricing.custom": "Custom",
+      "landing.pricing.securePayment": "Secure payment via Polar",
+      "landing.pricing.freeTrial": "7-day free trial",
+      "landing.consultation.title": "Schedule an online consult and get your setup live",
+      "landing.consultation.subtitle": "Want to see CheckinLynk in action? Book a short 15-20 minute online consult. We'll show a live demo, answer your questions, provide pricing advice, and help you get started.",
+      "landing.consultation.cardTitle": "Online Consult – CheckinLynk",
+      "landing.consultation.duration": "15-20 minutes • Via Google Meet or Zoom",
+      "landing.consultation.whatsIncluded": "What you get:",
+      "landing.consultation.includes.demo": "Live demo of the platform",
+      "landing.consultation.includes.pricing": "Tailored pricing advice",
+      "landing.consultation.includes.setupTips": "Setup tips and best practices",
+      "landing.consultation.includes.questions": "Answers to all your questions",
+      "landing.consultation.includes.firstProperty": "Help setting up your first property",
+      "landing.consultation.cta": "Choose date & time",
+      "landing.consultation.disclaimer": "No obligations. Just an intro to see if CheckinLynk fits you.",
+      "landing.consultation.selectDate": "Select a date",
+      "landing.consultation.calendarTitle": "March 2025",
+      "landing.consultation.weekdays.mon": "Mon",
+      "landing.consultation.weekdays.tue": "Tue",
+      "landing.consultation.weekdays.wed": "Wed",
+      "landing.consultation.weekdays.thu": "Thu",
+      "landing.consultation.weekdays.fri": "Fri",
+      "landing.consultation.weekdays.sat": "Sat",
+      "landing.consultation.weekdays.sun": "Sun",
+      "landing.consultation.availableTimes": "Available times (CET)",
+      "landing.testimonials.badge": "Reviews",
+      "landing.testimonials.title": "What do other hosts say?",
+      "landing.earlyAccess.badge": "Early Access",
+      "landing.earlyAccess.title": "Become one of the first CheckinLynk hosts",
+      "landing.earlyAccess.subtitle": "Sign up for the test program and help us improve CheckinLynk. As an early adopter you get ",
+      "landing.earlyAccess.freeMonths": "3 months free",
+      "landing.earlyAccess.subtitleAfter": " and priority support during onboarding.",
+      "landing.earlyAccess.benefit1.title": "3 months free",
+      "landing.earlyAccess.benefit1.description": "Try CheckinLynk risk-free and only pay after the trial period.",
+      "landing.earlyAccess.benefit2.title": "Fast onboarding",
+      "landing.earlyAccess.benefit2.description": "We launch your first property together in under 30 minutes.",
+      "landing.earlyAccess.benefit3.title": "Influence the roadmap",
+      "landing.earlyAccess.benefit3.description": "Your feedback decides which features we build next.",
+      "landing.earlyAccess.form.title": "Sign up for the test program",
+      "landing.earlyAccess.form.description": "Fill in your details and we'll contact you within 24 hours",
+      "landing.earlyAccess.form.nameLabel": "Name *",
+      "landing.earlyAccess.form.namePlaceholder": "Your full name",
+      "landing.earlyAccess.form.emailLabel": "Email *",
+      "landing.earlyAccess.form.emailPlaceholder": "you@email.com",
+      "landing.earlyAccess.form.accommodationsLabel": "Number of properties *",
+      "landing.earlyAccess.form.accommodationsPlaceholder": "Select number",
+      "landing.earlyAccess.form.accommodationsOption1": "1-3 properties",
+      "landing.earlyAccess.form.accommodationsOption2": "4-10 properties",
+      "landing.earlyAccess.form.accommodationsOption3": "11+ properties",
+      "landing.earlyAccess.form.cityLabel": "City/Region",
+      "landing.earlyAccess.form.cityPlaceholder": "For example: Amsterdam",
+      "landing.earlyAccess.form.submit": "Sign up (3 months free)",
+      "landing.earlyAccess.form.disclaimer": "Limited spots. No obligations. Cancel anytime.",
+      "landing.earlyAccess.form.ctaSecondary": "See how it works"
     }
   },
   es: {
@@ -1320,16 +1589,41 @@ const resources = {
   }
 };
 
-i18n
-  .use(initReactI18next)
-  .init({
-    resources,
-    lng: 'en', // default language
-    fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false // React already escapes
+if (!i18n.isInitialized) {
+  i18n
+    .use(initReactI18next)
+    .init({
+      resources,
+      lng: getInitialLanguage(),
+      fallbackLng: DEFAULT_LANGUAGE,
+      interpolation: {
+        escapeValue: false // React already escapes
+      },
+      returnNull: false,
+      returnEmptyString: false
+    });
+
+  if (typeof document !== 'undefined') {
+    document.documentElement.lang = i18n.language;
+  }
+
+  i18n.on('languageChanged', (language) => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = language;
+    }
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(LANGUAGE_STORAGE_KEY, normalizeLanguage(language) ?? DEFAULT_LANGUAGE);
     }
   });
+
+  if (import.meta.env.DEV) {
+    i18n.on('missingKey', (_languages, _namespace, key) => {
+      if (!i18n.exists(key, { lng: DEFAULT_LANGUAGE })) {
+        console.warn(`[i18n] Missing translation key: ${key}`);
+      }
+    });
+  }
+}
 
 export default i18n;
 export { useTranslation };
