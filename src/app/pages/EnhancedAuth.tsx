@@ -63,13 +63,13 @@ export default function EnhancedAuth() {
       if (error.message?.includes('invalid-credential') || error.code === 'auth/invalid-credential') {
         toast.error(
           <div className="space-y-2">
-            <p className="font-semibold">Unable to sign in</p>
-            <p className="text-sm">Please check your email and password, or create a new account if you haven't registered yet.</p>
+            <p className="font-semibold">{t('auth.errors.unableToSignIn')}</p>
+            <p className="text-sm">{t('auth.errors.signInHelp')}</p>
           </div>,
           { duration: 5000 }
         );
       } else {
-        toast.error(error.message || 'Sign in failed');
+        toast.error(error.message || t('auth.errors.signInFailed'));
       }
     } finally {
       setLoading(false);

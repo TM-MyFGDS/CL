@@ -67,7 +67,7 @@ export default function HostDashboard() {
       if (error.code === 'permission-denied') {
         setPermissionError(true);
       } else {
-        toast.error('Failed to load properties');
+        toast.error(t('dashboard.errors.loadFailed'));
       }
     } finally {
       setLoading(false);
@@ -106,20 +106,20 @@ export default function HostDashboard() {
   const handleLogout = async () => {
     try {
       await auth.signOut();
-      toast.success('Signed out successfully');
+      toast.success(t('dashboard.success.signedOut'));
       navigate('/');
     } catch (error: any) {
-      toast.error('Failed to sign out');
+      toast.error(t('dashboard.errors.signOutFailed'));
     }
   };
 
   const handleDeleteProperty = async (id: string) => {
     try {
       await deleteProperty(id);
-      toast.success('Property deleted successfully');
+      toast.success(t('dashboard.success.deleted'));
       loadProperties();
     } catch (error: any) {
-      toast.error('Failed to delete property');
+      toast.error(t('dashboard.errors.deleteFailed'));
       console.error(error);
     }
   };
@@ -127,11 +127,11 @@ export default function HostDashboard() {
   const handleMarkCleaned = async (propertyId: string) => {
     try {
       await firestoreService.markPropertyCleaned(propertyId);
-      toast.success('Property marked as cleaned');
+      toast.success(t('dashboard.success.markedCleaned'));
       // Reload properties to update status
       loadProperties();
     } catch (error: any) {
-      toast.error('Failed to mark property as cleaned');
+      toast.error(t('dashboard.errors.markCleanFailed'));
       console.error(error);
     }
   };
@@ -237,41 +237,47 @@ export default function HostDashboard() {
         <main className="flex-1 px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           {/* Page Header */}
           <div className="mb-6 sm:mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">Dashboard</h1>
-            <p className="text-sm sm:text-base text-muted-foreground">Overzicht van al je accommodaties en hun status</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{t('dashboard.title')}</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">{t('dashboard.subtitle')}</p>
           </div>
 
           {/* Stats Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
             <Card className="bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800">
               <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-6">
-                <CardDescription className="text-xs sm:text-sm text-green-700 dark:text-green-400">Bezet</CardDescription>
+                <CardDescription className="text-xs sm:text-sm text-green-700 dark:text-green-400">
+                  {t('dashboard.status.occupied')}
+                </CardDescription>
                 <CardTitle className="text-3xl sm:text-4xl text-green-700 dark:text-green-400">{occupiedCount}</CardTitle>
               </CardHeader>
             </Card>
 
             <Card className="bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800">
               <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-6">
-                <CardDescription className="text-xs sm:text-sm text-orange-700 dark:text-orange-400">Schoonmaak</CardDescription>
+                <CardDescription className="text-xs sm:text-sm text-orange-700 dark:text-orange-400">
+                  {t('dashboard.status.cleaning')}
+                </CardDescription>
                 <CardTitle className="text-3xl sm:text-4xl text-orange-700 dark:text-orange-400">{needsCleaningCount}</CardTitle>
               </CardHeader>
             </Card>
 
             <Card className="bg-gray-50 dark:bg-gray-950/30 border-gray-200 dark:border-gray-800">
               <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-6">
-                <CardDescription className="text-xs sm:text-sm text-gray-700 dark:text-gray-400">Leeg</CardDescription>
+                <CardDescription className="text-xs sm:text-sm text-gray-700 dark:text-gray-400">
+                  {t('dashboard.status.vacant')}
+                </CardDescription>
                 <CardTitle className="text-3xl sm:text-4xl text-gray-700 dark:text-gray-400">{vacantCount}</CardTitle>
               </CardHeader>
             </Card>
 
             <Card>
               <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-6">
-                <CardDescription className="text-xs sm:text-sm">Vandaag</CardDescription>
+                <CardDescription className="text-xs sm:text-sm">{t('dashboard.today')}</CardDescription>
                 <div className="flex items-baseline gap-1 sm:gap-2">
                   <CardTitle className="text-xl sm:text-2xl">{todaysCheckins}</CardTitle>
-                  <span className="text-[10px] sm:text-xs text-muted-foreground">in /</span>
+                  <span className="text-[10px] sm:text-xs text-muted-foreground">{t('dashboard.todayCheckins')}</span>
                   <CardTitle className="text-xl sm:text-2xl">{todaysCheckouts}</CardTitle>
-                  <span className="text-[10px] sm:text-xs text-muted-foreground">uit</span>
+                  <span className="text-[10px] sm:text-xs text-muted-foreground">{t('dashboard.todayCheckouts')}</span>
                 </div>
               </CardHeader>
             </Card>
@@ -286,7 +292,7 @@ export default function HostDashboard() {
             >
               <Plus className="mr-2 h-5 w-5" />
               <span className="hidden sm:inline">{t('dashboard.addProperty')}</span>
-              <span className="sm:hidden">Accommodatie Toevoegen</span>
+              <span className="sm:hidden">{t('dashboard.addPropertyShort')}</span>
             </Button>
           </div>
 
@@ -295,7 +301,7 @@ export default function HostDashboard() {
             <div className="mb-6">
               <Input
                 type="text"
-                placeholder="Zoek accommodaties..."
+                placeholder={t('dashboard.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="max-w-md"
@@ -311,11 +317,11 @@ export default function HostDashboard() {
                   <Home className="h-12 w-12 text-accent-foreground" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">Geen accommodaties gevonden</h3>
+                  <h3 className="text-xl font-semibold mb-2">{t('dashboard.empty.title')}</h3>
                   <p className="text-muted-foreground mb-6">
                     {searchTerm
-                      ? 'Probeer een andere zoekterm'
-                      : 'Begin door je eerste vakantiewoning toe te voegen'}
+                      ? t('dashboard.empty.searchHint')
+                      : t('dashboard.empty.addHint')}
                   </p>
                   {!searchTerm && (
                     <Button
@@ -324,7 +330,7 @@ export default function HostDashboard() {
                       onClick={() => navigate('/properties/new')}
                     >
                       <Plus className="mr-2 h-5 w-5" />
-                      Voeg Je Eerste Accommodatie Toe
+                      {t('dashboard.empty.addAction')}
                     </Button>
                   )}
                 </div>
@@ -443,7 +449,7 @@ export default function HostDashboard() {
                       <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg p-4 space-y-3">
                         <div className="flex items-center gap-2 text-orange-700 dark:text-orange-400">
                           <AlertTriangle className="h-5 w-5" />
-                          <h4 className="font-semibold">Schoonmaak vereist</h4>
+                          <h4 className="font-semibold">{t('dashboard.status.cleaningRequired')}</h4>
                         </div>
 
                         {lastCheckout && (
@@ -467,7 +473,7 @@ export default function HostDashboard() {
                       <div className="bg-muted/50 rounded-lg p-4 space-y-3">
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Circle className="h-5 w-5" />
-                          <h4 className="font-semibold">Beschikbaar</h4>
+                          <h4 className="font-semibold">{t('dashboard.status.available')}</h4>
                         </div>
 
                         {lastCheckout && (
@@ -498,7 +504,7 @@ export default function HostDashboard() {
                         onClick={(e) => {
                           e.stopPropagation();
                           copyToClipboard(`${window.location.origin}/g/${property.guestToken}`);
-                          toast.success('Link gekopieerd!');
+                          toast.success(t('property.linkCopied'));
                         }}
                       >
                         <Link2 className="h-4 w-4 mr-2" />

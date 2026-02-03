@@ -84,7 +84,7 @@ export default function PropertyDetail() {
       const propertyData = await getProperty(id);
 
       if (!propertyData) {
-        toast.error('Property not found');
+        toast.error(t('property.detail.errors.notFound'));
         navigate('/dashboard');
         return;
       }
@@ -104,7 +104,7 @@ export default function PropertyDetail() {
       setBars(propertyData.bars || []);
       setMedicalContacts(propertyData.medicalContacts || []);
     } catch (error: any) {
-      toast.error('Failed to load property: ' + error.message);
+      toast.error(t('property.detail.errors.loadFailed', { message: error.message }));
       console.error(error);
     } finally {
       setLoading(false);
@@ -144,10 +144,10 @@ export default function PropertyDetail() {
         bars,
         medicalContacts,
       });
-      toast.success('Property updated successfully!');
+      toast.success(t('property.detail.success.updated'));
       loadPropertyData(); // Reload to get updated data
     } catch (error: any) {
-      toast.error('Failed to update property: ' + error.message);
+      toast.error(t('property.detail.errors.updateFailed', { message: error.message }));
     } finally {
       setSaving(false);
     }
@@ -160,7 +160,7 @@ export default function PropertyDetail() {
     if (success) {
       toast.success(t('property.linkCopied'));
     } else {
-      toast.error('Failed to copy link');
+      toast.error(t('property.detail.errors.copyFailed'));
     }
   };
 
@@ -171,9 +171,9 @@ export default function PropertyDetail() {
     try {
       const newToken = await regenerateGuestToken(property.id);
       setProperty({ ...property, guestToken: newToken });
-      toast.success('Guest link regenerated successfully!');
+      toast.success(t('property.detail.success.linkRegenerated'));
     } catch (error: any) {
-      toast.error('Failed to regenerate link: ' + error.message);
+      toast.error(t('property.detail.errors.regenerateFailed', { message: error.message }));
     }
   };
 
@@ -209,7 +209,7 @@ export default function PropertyDetail() {
       await updateUserProfile(user.id, { hostProfile: profile });
       setHostProfile(profile);
     } catch (error: any) {
-      toast.error('Failed to update profile: ' + error.message);
+      toast.error(t('property.detail.errors.profileUpdateFailed', { message: error.message }));
     }
   };
 
@@ -232,7 +232,7 @@ export default function PropertyDetail() {
       localTips: property.localTips || '',
       hostProfile: {
         ...hostProfile,
-        displayName: hostProfile.displayName || 'Host',
+        displayName: hostProfile.displayName || t('host.defaultName'),
       },
       pointsOfInterest: pointsOfInterest || [],
       restaurants: restaurants || [],
@@ -257,7 +257,7 @@ export default function PropertyDetail() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-coral-50 via-white to-coral-100 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-muted-foreground">Property not found</p>
+          <p className="text-muted-foreground">{t('property.detail.notFound')}</p>
           <Button onClick={() => navigate('/dashboard')} className="mt-4">
             {t('common.back')}
           </Button>
@@ -297,12 +297,14 @@ export default function PropertyDetail() {
                     className="gap-2"
                   >
                     <Eye className="h-4 w-4" />
-                    <span className="hidden sm:inline">Preview Guest View</span>
-                    <span className="sm:hidden">Preview</span>
+                    <span className="hidden sm:inline">{t('property.detail.previewGuestView')}</span>
+                    <span className="sm:hidden">{t('common.preview')}</span>
                   </Button>
                   <Button onClick={handleSave} disabled={saving}>
                     <Save className="h-4 w-4 sm:mr-2" />
-                    <span className="hidden sm:inline">{saving ? 'Saving...' : 'Save'}</span>
+                    <span className="hidden sm:inline">
+                      {saving ? t('common.saving') : t('common.save')}
+                    </span>
                   </Button>
                 </>
               ) : (
@@ -312,8 +314,8 @@ export default function PropertyDetail() {
                   className="gap-2"
                 >
                   <Edit3 className="h-4 w-4" />
-                  <span className="hidden sm:inline">Back To Edit Mode</span>
-                  <span className="sm:hidden">Edit</span>
+                  <span className="hidden sm:inline">{t('property.detail.backToEditMode')}</span>
+                  <span className="sm:hidden">{t('common.edit')}</span>
                 </Button>
               )}
             </div>
@@ -347,15 +349,15 @@ export default function PropertyDetail() {
                 <div className="flex flex-col sm:flex-row gap-2">
                   <Button onClick={handleCopyLink}>
                     <Copy className="h-4 w-4 mr-2" />
-                    Copy Guest Link
+                    {t('property.detail.copyGuestLink')}
                   </Button>
                   <Button onClick={handleRegenerateToken} variant="outline">
                     <RefreshCw className="h-4 w-4 mr-2" />
-                    Regenerate Link
+                    {t('property.detail.regenerateLink')}
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Share this secure link with your guests. You can regenerate it anytime for security.
+                  {t('property.detail.shareLinkHelp')}
                 </p>
               </CardContent>
             </Card>
@@ -364,29 +366,31 @@ export default function PropertyDetail() {
             <Tabs defaultValue="details" className="space-y-6">
               <TabsList className="grid w-full grid-cols-4 h-auto">
                 <TabsTrigger value="details" className="text-xs sm:text-sm px-2 py-2.5">
-                  <span className="hidden sm:inline">Property Details</span>
-                  <span className="sm:hidden">Details</span>
+                  <span className="hidden sm:inline">{t('property.detail.tabs.details')}</span>
+                  <span className="sm:hidden">{t('property.detail.tabs.detailsShort')}</span>
                 </TabsTrigger>
                 <TabsTrigger value="info" className="text-xs sm:text-sm px-2 py-2.5">
-                  <span className="hidden sm:inline">Guest Info</span>
-                  <span className="sm:hidden">Info</span>
+                  <span className="hidden sm:inline">{t('property.detail.tabs.guestInfo')}</span>
+                  <span className="sm:hidden">{t('property.detail.tabs.guestInfoShort')}</span>
                 </TabsTrigger>
                 <TabsTrigger value="rules" className="text-xs sm:text-sm px-2 py-2.5">
-                  <span className="hidden sm:inline">House Rules</span>
-                  <span className="sm:hidden">Rules</span>
+                  <span className="hidden sm:inline">{t('property.detail.tabs.houseRules')}</span>
+                  <span className="sm:hidden">{t('property.detail.tabs.houseRulesShort')}</span>
                 </TabsTrigger>
-                <TabsTrigger value="settings" className="text-xs sm:text-sm px-2 py-2.5">Settings</TabsTrigger>
+                <TabsTrigger value="settings" className="text-xs sm:text-sm px-2 py-2.5">
+                  {t('common.settings')}
+                </TabsTrigger>
               </TabsList>
 
               {/* Property Details Tab */}
               <TabsContent value="details" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Basic Information</CardTitle>
+                    <CardTitle>{t('property.detail.basicInformation')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <Input
-                      placeholder="Property Name"
+                      placeholder={t('property.propertyName')}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="bg-input-background"
@@ -394,13 +398,13 @@ export default function PropertyDetail() {
 
                     <div className="grid grid-cols-2 gap-3">
                       <Input
-                        placeholder="Street Name"
+                        placeholder={t('property.streetName')}
                         value={address.streetName}
                         onChange={(e) => setAddress({ ...address, streetName: e.target.value })}
                         className="bg-input-background"
                       />
                       <Input
-                        placeholder="House Number"
+                        placeholder={t('property.houseNumber')}
                         value={address.houseNumber}
                         onChange={(e) => setAddress({ ...address, houseNumber: e.target.value })}
                         className="bg-input-background"
@@ -409,13 +413,13 @@ export default function PropertyDetail() {
 
                     <div className="grid grid-cols-2 gap-3">
                       <Input
-                        placeholder="Postal Code"
+                        placeholder={t('property.postalCode')}
                         value={address.postalCode}
                         onChange={(e) => setAddress({ ...address, postalCode: e.target.value })}
                         className="bg-input-background"
                       />
                       <Input
-                        placeholder="Country"
+                        placeholder={t('property.country')}
                         value={address.country}
                         onChange={(e) => setAddress({ ...address, country: e.target.value })}
                         className="bg-input-background"
@@ -423,7 +427,7 @@ export default function PropertyDetail() {
                     </div>
 
                     <Textarea
-                      placeholder="Description"
+                      placeholder={t('property.description')}
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       className="bg-input-background min-h-32"
@@ -437,37 +441,37 @@ export default function PropertyDetail() {
                 {/* Check-in Info */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Check-in / Check-out</CardTitle>
+                    <CardTitle>{t('property.detail.checkInOut')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-3">
                       <Input
-                        placeholder="Check-in Time (e.g., 3:00 PM)"
+                        placeholder={t('property.detail.checkInTimePlaceholder')}
                         value={checkInInfo.checkInTime}
                         onChange={(e) => setCheckInInfo({ ...checkInInfo, checkInTime: e.target.value })}
                         className="bg-input-background"
                       />
                       <Input
-                        placeholder="Check-out Time (e.g., 11:00 AM)"
+                        placeholder={t('property.detail.checkOutTimePlaceholder')}
                         value={checkInInfo.checkOutTime}
                         onChange={(e) => setCheckInInfo({ ...checkInInfo, checkOutTime: e.target.value })}
                         className="bg-input-background"
                       />
                     </div>
                     <SecureCodeInput
-                      label="Key Code"
+                      label={t('property.detail.keyCode')}
                       value={checkInInfo.keyCode || ''}
                       onChange={(value) => setCheckInInfo({ ...checkInInfo, keyCode: value })}
                       placeholder="••••••"
                     />
                     <SecureCodeInput
-                      label="Alarm Code"
+                      label={t('property.detail.alarmCode')}
                       value={checkInInfo.alarmCode || ''}
                       onChange={(value) => setCheckInInfo({ ...checkInInfo, alarmCode: value })}
                       placeholder="••••••"
                     />
                     <Textarea
-                      placeholder="Check-in Instructions (optional)"
+                      placeholder={t('property.detail.checkInInstructionsPlaceholder')}
                       value={checkInInfo.instructions || ''}
                       onChange={(e) => setCheckInInfo({ ...checkInInfo, instructions: e.target.value })}
                       className="bg-input-background min-h-24"
@@ -478,17 +482,17 @@ export default function PropertyDetail() {
                 {/* WiFi Info */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>WiFi Information</CardTitle>
+                    <CardTitle>{t('property.detail.wifiInformation')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <Input
-                      placeholder="Network Name (SSID)"
+                      placeholder={t('property.detail.networkNamePlaceholder')}
                       value={wifiInfo.ssid}
                       onChange={(e) => setWifiInfo({ ...wifiInfo, ssid: e.target.value })}
                       className="bg-input-background"
                     />
                     <Input
-                      placeholder="Password"
+                      placeholder={t('auth.password')}
                       value={wifiInfo.password}
                       onChange={(e) => setWifiInfo({ ...wifiInfo, password: e.target.value })}
                       className="bg-input-background"
@@ -499,11 +503,11 @@ export default function PropertyDetail() {
                 {/* Parking Info */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Parking</CardTitle>
+                    <CardTitle>{t('property.detail.parking')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <Input
-                      placeholder="Parking Address / Location"
+                      placeholder={t('property.detail.parkingAddressPlaceholder')}
                       value={parkingInfo.address}
                       onChange={(e) => setParkingInfo({ ...parkingInfo, address: e.target.value })}
                       className="bg-input-background"
@@ -515,7 +519,7 @@ export default function PropertyDetail() {
                           checked={parkingInfo.type === 'free'}
                           onCheckedChange={() => setParkingInfo({ ...parkingInfo, type: 'free' })}
                         />
-                        <label htmlFor="parking-free" className="cursor-pointer">Free</label>
+                        <label htmlFor="parking-free" className="cursor-pointer">{t('property.detail.parkingFree')}</label>
                       </div>
                       <div className="flex items-center gap-2">
                         <Checkbox
@@ -523,7 +527,7 @@ export default function PropertyDetail() {
                           checked={parkingInfo.type === 'paid'}
                           onCheckedChange={() => setParkingInfo({ ...parkingInfo, type: 'paid' })}
                         />
-                        <label htmlFor="parking-paid" className="cursor-pointer">Paid</label>
+                        <label htmlFor="parking-paid" className="cursor-pointer">{t('property.detail.parkingPaid')}</label>
                       </div>
                     </div>
                   </CardContent>
@@ -532,7 +536,7 @@ export default function PropertyDetail() {
                 {/* Emergency Contacts */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Emergency Contacts</CardTitle>
+                    <CardTitle>{t('property.detail.emergencyContacts')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <EmergencyContactsEditor
@@ -577,7 +581,7 @@ export default function PropertyDetail() {
               <TabsContent value="rules" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>House Rules</CardTitle>
+                    <CardTitle>{t('property.detail.houseRules')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <HouseRulesAccordion

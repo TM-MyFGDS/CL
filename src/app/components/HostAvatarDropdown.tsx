@@ -59,7 +59,7 @@ export function HostAvatarDropdown({
   const handleLogout = async () => {
     try {
       await auth.signOut();
-      toast.success('Uitgelogd');
+      toast.success(t('host.avatar.logoutSuccess'));
       setSheetOpen(false);
       if (onLogout) {
         onLogout();
@@ -68,11 +68,11 @@ export function HostAvatarDropdown({
       }
     } catch (error) {
       console.error('Logout error:', error);
-      toast.error('Uitloggen mislukt');
+      toast.error(t('host.avatar.logoutFailed'));
     }
   };
 
-  const displayName = userName || userEmail?.split('@')[0] || 'Host';
+  const displayName = userName || userEmail?.split('@')[0] || t('host.defaultName');
   const displayEmail = userEmail || '';
 
   const avatarButton = (
@@ -137,7 +137,7 @@ export function HostAvatarDropdown({
           className="text-[13px] text-coral-600 hover:text-coral-700 dark:text-coral-500 
                    dark:hover:text-coral-400 hover:underline transition-colors"
         >
-          Profiel bekijken
+          {t('host.avatar.viewProfile')}
         </button>
       </div>
 
@@ -155,7 +155,7 @@ export function HostAvatarDropdown({
         >
           <UserCircle className="h-6 w-6 text-gray-600 dark:text-gray-400" />
           <span className="text-[14px] text-gray-900 dark:text-white">
-            Profielinstellingen
+            {t('host.avatar.profileSettings')}
           </span>
         </button>
 
@@ -169,7 +169,7 @@ export function HostAvatarDropdown({
         >
           <Camera className="h-6 w-6 text-gray-600 dark:text-gray-400" />
           <div className="flex items-center gap-2 flex-1">
-            <span className="text-[14px] text-gray-900 dark:text-white">Foto uploaden</span>
+            <span className="text-[14px] text-gray-900 dark:text-white">{t('host.avatar.uploadPhoto')}</span>
             {!avatarUrl && (
               <div className="h-1.5 w-1.5 rounded-full bg-orange-500" />
             )}
@@ -187,7 +187,7 @@ export function HostAvatarDropdown({
           <Globe className="h-6 w-6 text-gray-600 dark:text-gray-400" />
           <div className="flex-1 min-w-0">
             <div className="text-[14px] text-gray-900 dark:text-white">
-              Talen & communicatie
+              {t('host.avatar.languagesCommunication')}
             </div>
           </div>
         </button>
@@ -212,7 +212,7 @@ export function HostAvatarDropdown({
                    hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
         >
           <HelpCircle className="h-6 w-6 text-gray-600 dark:text-gray-400" />
-          <span className="text-[14px] text-gray-900 dark:text-white">Helppagina</span>
+          <span className="text-[14px] text-gray-900 dark:text-white">{t('host.avatar.help')}</span>
         </button>
 
         <button
@@ -221,7 +221,7 @@ export function HostAvatarDropdown({
           onClick={handleLogout}
         >
           <LogOut className="h-6 w-6 text-red-600 dark:text-red-500" />
-          <span className="text-[14px] text-red-600 dark:text-red-500">Uitloggen</span>
+          <span className="text-[14px] text-red-600 dark:text-red-500">{t('host.avatar.logout')}</span>
         </button>
       </div>
     </>

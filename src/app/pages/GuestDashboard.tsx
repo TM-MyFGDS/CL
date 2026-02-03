@@ -142,12 +142,14 @@ export default function GuestDashboard() {
           <CardContent className="pt-6">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-muted-foreground">Address</p>
+                <p className="text-muted-foreground">{t('common.address')}</p>
                 <p className="font-medium">{property.address}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">{t('property.guestCapacity')}</p>
-                <p className="font-medium">{property.guestCapacity} guests</p>
+                <p className="font-medium">
+                  {t('guest.dashboard.guestCount', { count: property.guestCapacity })}
+                </p>
               </div>
               <div>
                 <p className="text-muted-foreground">{t('property.bedrooms')}</p>
@@ -160,7 +162,7 @@ export default function GuestDashboard() {
             </div>
             {property.description && (
               <div className="mt-4">
-                <p className="text-muted-foreground mb-2">Description</p>
+                <p className="text-muted-foreground mb-2">{t('common.description')}</p>
                 <p className="text-foreground">{property.description}</p>
               </div>
             )}
@@ -174,7 +176,7 @@ export default function GuestDashboard() {
           {blocks.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">
-                <p className="text-muted-foreground">No information blocks available yet</p>
+                <p className="text-muted-foreground">{t('guest.dashboard.noBlocks')}</p>
               </CardContent>
             </Card>
           ) : (
@@ -206,10 +208,10 @@ export default function GuestDashboard() {
         {/* Footer */}
         <div className="mt-12 pt-8 border-t border-border text-center">
           <p className="text-sm text-muted-foreground mb-2">
-            Have questions? Contact your host
+            {t('guest.dashboard.contactHost')}
           </p>
           <p className="text-xs text-muted-foreground">
-            Powered by CheckinLynk
+            {t('guest.dashboard.poweredBy')}
           </p>
         </div>
       </main>

@@ -6,6 +6,7 @@ import { Checkbox } from '@/app/components/ui/checkbox';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 interface LanguageSelectionModalProps {
   isOpen: boolean;
@@ -13,17 +14,18 @@ interface LanguageSelectionModalProps {
 }
 
 const AVAILABLE_LANGUAGES = [
-  { id: 'nl', label: 'Nederlands', flag: '🇳🇱' },
-  { id: 'en', label: 'Engels', flag: '🇬🇧' },
-  { id: 'de', label: 'Duits', flag: '🇩🇪' },
-  { id: 'fr', label: 'Frans', flag: '🇫🇷' },
-  { id: 'es', label: 'Spaans', flag: '🇪🇸' },
-  { id: 'it', label: 'Italiaans', flag: '🇮🇹' },
-  { id: 'pt', label: 'Portugees', flag: '🇵🇹' },
-  { id: 'other', label: 'Anders', flag: '🌍' },
+  { id: 'nl', labelKey: 'language.dutch', flag: '🇳🇱' },
+  { id: 'en', labelKey: 'language.english', flag: '🇬🇧' },
+  { id: 'de', labelKey: 'language.german', flag: '🇩🇪' },
+  { id: 'fr', labelKey: 'language.french', flag: '🇫🇷' },
+  { id: 'es', labelKey: 'language.spanish', flag: '🇪🇸' },
+  { id: 'it', labelKey: 'language.italian', flag: '🇮🇹' },
+  { id: 'pt', labelKey: 'language.portuguese', flag: '🇵🇹' },
+  { id: 'other', labelKey: 'language.other', flag: '🌍' },
 ];
 
 export function LanguageSelectionModal({ isOpen, onClose }: LanguageSelectionModalProps) {
+  const { t } = useTranslation();
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(['nl']);
   const [otherLanguage, setOtherLanguage] = useState('');
 
@@ -37,12 +39,12 @@ export function LanguageSelectionModal({ isOpen, onClose }: LanguageSelectionMod
 
   const handleSave = () => {
     if (selectedLanguages.length === 0) {
-      toast.error('Selecteer minimaal één taal');
+      toast.error(t('languageSelection.errors.selectOne'));
       return;
     }
 
     if (selectedLanguages.includes('other') && !otherLanguage.trim()) {
-      toast.error('Vul de andere taal in');
+      toast.error(t('languageSelection.errors.enterOther'));
       return;
     }
 
@@ -52,7 +54,7 @@ export function LanguageSelectionModal({ isOpen, onClose }: LanguageSelectionMod
       otherLanguage: selectedLanguages.includes('other') ? otherLanguage : '',
     });
 
-    toast.success('Talen opgeslagen');
+    toast.success(t('languageSelection.success'));
     onClose();
   };
 
@@ -60,16 +62,19 @@ export function LanguageSelectionModal({ isOpen, onClose }: LanguageSelectionMod
     const selected = AVAILABLE_LANGUAGES.filter((lang) =>
       selectedLanguages.includes(lang.id) && lang.id !== 'other'
     );
-    const labels = selected.map((lang) => lang.label);
+    const labels = selected.map((lang) => t(lang.labelKey));
     
     if (selectedLanguages.includes('other') && otherLanguage) {
       labels.push(otherLanguage);
     }
 
-    if (labels.length === 0) return 'Geen talen geselecteerd';
+    if (labels.length === 0) return t('languageSelection.noneSelected');
     if (labels.length === 1) return labels[0];
-    if (labels.length === 2) return `${labels[0]} en ${labels[1]}`;
-    return `${labels.slice(0, -1).join(', ')} en ${labels[labels.length - 1]}`;
+    if (labels.length === 2) return t('languageSelection.twoSelected', { first: labels[0], second: labels[1] });
+    return t('languageSelection.multipleSelected', {
+      list: labels.slice(0, -1).join(', '),
+      last: labels[labels.length - 1]
+    });
   };
 
   return (
@@ -79,9 +84,9 @@ export function LanguageSelectionModal({ isOpen, onClose }: LanguageSelectionMod
                    border border-gray-200 dark:border-gray-700 rounded-2xl"
         aria-describedby="language-selection-description"
       >
-        <DialogTitle className="sr-only">Talen & communicatie</DialogTitle>
+        <DialogTitle className="sr-only">{t('languageSelection.title')}</DialogTitle>
         <DialogDescription id="language-selection-description" className="sr-only">
-          Selecteer de talen die je spreekt om gasten te laten weten hoe je kunt communiceren
+          {t('languageSelection.description')}
         </DialogDescription>
         
         {/* Modal Header */}
@@ -99,10 +104,10 @@ export function LanguageSelectionModal({ isOpen, onClose }: LanguageSelectionMod
               </div>
               <div>
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Talen & communicatie
+                  {t('languageSelection.title')}
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Gasten zien welke talen je spreekt
+                  {t('languageSelection.subtitle')}
                 </p>
               </div>
             </div>
@@ -126,7 +131,7 @@ export function LanguageSelectionModal({ isOpen, onClose }: LanguageSelectionMod
                 <Check className="h-5 w-5 text-coral-600 dark:text-coral-500 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
-                    Geselecteerde talen
+                    {t('languageSelection.selectedTitle')}
                   </p>
                   <p className="text-sm text-gray-700 dark:text-gray-300">
                     {getSelectedLanguagesText()}
@@ -139,7 +144,7 @@ export function LanguageSelectionModal({ isOpen, onClose }: LanguageSelectionMod
           {/* Language Selection Grid */}
           <div className="space-y-3">
             <Label className="text-sm font-medium text-gray-900 dark:text-white">
-              Selecteer alle talen die je spreekt
+              {t('languageSelection.selectAll')}
             </Label>
             <div className="grid grid-cols-2 gap-3">
               {AVAILABLE_LANGUAGES.map((language) => (
@@ -167,7 +172,7 @@ export function LanguageSelectionModal({ isOpen, onClose }: LanguageSelectionMod
                   >
                     <span className="text-xl">{language.flag}</span>
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
-                      {language.label}
+                      {t(language.labelKey)}
                     </span>
                   </label>
                 </div>
@@ -179,13 +184,13 @@ export function LanguageSelectionModal({ isOpen, onClose }: LanguageSelectionMod
           {selectedLanguages.includes('other') && (
             <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
               <Label htmlFor="otherLang" className="text-sm text-gray-900 dark:text-white">
-                Welke andere taal spreek je?
+                {t('languageSelection.otherLabel')}
               </Label>
               <Input
                 id="otherLang"
                 value={otherLanguage}
                 onChange={(e) => setOtherLanguage(e.target.value)}
-                placeholder="Bijv. Pools, Russisch, Arabisch..."
+                placeholder={t('languageSelection.otherPlaceholder')}
                 className="bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600"
               />
             </div>
@@ -195,8 +200,7 @@ export function LanguageSelectionModal({ isOpen, onClose }: LanguageSelectionMod
           <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 
                         dark:border-blue-800 rounded-lg p-4">
             <p className="text-sm text-blue-900 dark:text-blue-200">
-              💡 <strong>Tip:</strong> Gasten voelen zich meer welkom wanneer ze weten dat je hun taal spreekt. 
-              Dit kan ook helpen bij het beantwoorden van vragen.
+              {t('languageSelection.tip')}
             </p>
           </div>
         </div>
@@ -212,7 +216,7 @@ export function LanguageSelectionModal({ isOpen, onClose }: LanguageSelectionMod
               className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 
                        dark:hover:bg-gray-700"
             >
-              Annuleren
+              {t('common.cancel')}
             </Button>
             <Button
               type="button"
@@ -222,7 +226,7 @@ export function LanguageSelectionModal({ isOpen, onClose }: LanguageSelectionMod
                        hover:to-coral-600 text-white disabled:opacity-50 
                        disabled:cursor-not-allowed"
             >
-              Opslaan
+              {t('common.save')}
             </Button>
           </div>
         </div>

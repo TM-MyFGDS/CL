@@ -296,15 +296,15 @@ export default function Landing() {
 
               <div className="grid grid-cols-3 gap-6 pt-6 border-t border-border">
                 <div>
-                  <div className="text-2xl font-bold text-foreground mb-1">80%</div>
+                  <div className="text-2xl font-bold text-foreground mb-1">{t('landing.hero.statValue1')}</div>
                   <div className="text-sm text-muted-foreground">{t('landing.hero.stat1')}</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-foreground mb-1">5 min</div>
+                  <div className="text-2xl font-bold text-foreground mb-1">{t('landing.hero.statValue2')}</div>
                   <div className="text-sm text-muted-foreground">{t('landing.hero.stat2')}</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-foreground mb-1">4.8★</div>
+                  <div className="text-2xl font-bold text-foreground mb-1">{t('landing.hero.statValue3')}</div>
                   <div className="text-sm text-muted-foreground">{t('landing.hero.stat3')}</div>
                 </div>
               </div>
@@ -319,36 +319,38 @@ export default function Landing() {
                         <Home className="h-6 w-6" />
                       </div>
                       <div>
-                        <div className="font-semibold text-lg">Zonnig Appartement</div>
-                        <div className="text-sm opacity-90">Amsterdam Centrum</div>
+                        <div className="font-semibold text-lg">{t('landing.hero.cardTitle')}</div>
+                        <div className="text-sm opacity-90">{t('landing.hero.cardLocation')}</div>
                       </div>
                     </div>
                     <Badge className="bg-white/20 border-white/30">
                       <CheckCircle className="h-3 w-3 mr-1" />
-                      Gast ingecheckt
+                      {t('landing.hero.cardStatus')}
                     </Badge>
                   </div>
                   <CardContent className="p-6 space-y-4">
                     <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
                       <Wifi className="h-5 w-5 text-primary" />
                       <div className="flex-1">
-                        <div className="text-sm font-medium">WiFi Network</div>
-                        <div className="text-xs text-muted-foreground">Sunshine_5G</div>
+                        <div className="text-sm font-medium">{t('landing.hero.cardWifi')}</div>
+                        <div className="text-xs text-muted-foreground">{t('landing.hero.cardWifiValue')}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
                       <KeyRound className="h-5 w-5 text-primary" />
                       <div className="flex-1">
-                        <div className="text-sm font-medium">Sleutelcode</div>
-                        <div className="text-xs text-muted-foreground">Tap to reveal</div>
+                        <div className="text-sm font-medium">{t('landing.hero.cardKeyCode')}</div>
+                        <div className="text-xs text-muted-foreground">{t('landing.hero.cardTapReveal')}</div>
                       </div>
                       <Eye className="h-4 w-4 text-muted-foreground" />
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
                       <MapPin className="h-5 w-5 text-primary" />
                       <div className="flex-1">
-                        <div className="text-sm font-medium">Lokale tips</div>
-                        <div className="text-xs text-muted-foreground">12 aanbevelingen</div>
+                        <div className="text-sm font-medium">{t('landing.hero.cardLocalTips')}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {t('landing.hero.cardRecommendationsCount', { count: 12 })}
+                        </div>
                       </div>
                     </div>
                   </CardContent>
@@ -519,7 +521,7 @@ export default function Landing() {
                     : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
-                Maandelijks
+                {t('landing.pricing.billingMonthly')}
               </button>
               <button
                 onClick={() => setPricingPeriod('yearly')}
@@ -528,7 +530,7 @@ export default function Landing() {
                     : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
-                Jaarlijks
+                {t('landing.pricing.billingYearly')}
                 <Badge className="ml-2 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 text-xs">
                   -17%
                 </Badge>
@@ -548,7 +550,7 @@ export default function Landing() {
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                     <Badge className="bg-gradient-to-r from-coral-500 to-coral-600 text-white">
-                      Meest gekozen
+                      {t('landing.pricing.mostPopular')}
                     </Badge>
                   </div>
                 )}
@@ -561,15 +563,15 @@ export default function Landing() {
                         <div className="text-4xl font-bold">
                           €{pricingPeriod === 'monthly' ? plan.price.monthly : Math.round(plan.price.yearly / 12)}
                         </div>
-                        <div className="text-sm text-muted-foreground">per maand</div>
+                        <div className="text-sm text-muted-foreground">{t('landing.pricing.perMonth')}</div>
                         {pricingPeriod === 'yearly' && (
                           <div className="text-xs text-muted-foreground mt-1">
-                            (€{plan.price.yearly} jaarlijks)
+                            {t('landing.pricing.yearlyPrice', { price: plan.price.yearly })}
                           </div>
                         )}
                       </>
                     ) : (
-                      <div className="text-2xl font-bold">Op maat</div>
+                      <div className="text-2xl font-bold">{t('landing.pricing.custom')}</div>
                     )}
                   </div>
                 </CardHeader>
@@ -607,11 +609,11 @@ export default function Landing() {
             <div className="inline-flex items-center gap-6 p-4 bg-muted rounded-lg">
               <div className="flex items-center gap-2 text-sm">
                 <Shield className="h-4 w-4 text-green-600 dark:text-green-400" />
-                <span>Veilig betalen via Polar</span>
+                <span>{t('landing.pricing.securePayment')}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
-                <span>7 dagen gratis proberen</span>
+                <span>{t('landing.pricing.freeTrial')}</span>
               </div>
             </div>
           </div>
@@ -623,55 +625,54 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-5xl font-bold mb-4">
-              Plan een online consult en krijg je setup live
+              {t('landing.consultation.title')}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Wil je CheckinLynk in actie zien? Plan een kort online consult van 15-20 minuten.
-              We laten je een live demo zien, beantwoorden al je vragen, geven pricing advies en helpen je meteen aan de slag.
+              {t('landing.consultation.subtitle')}
             </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
             <Card className="border-2 border-primary/20">
               <CardHeader>
-                <CardTitle className="text-2xl">Online Consult – CheckinLynk</CardTitle>
+                <CardTitle className="text-2xl">{t('landing.consultation.cardTitle')}</CardTitle>
                 <CardDescription className="text-base">
                   <Clock className="inline h-4 w-4 mr-1" />
-                  15-20 minuten • Via Google Meet of Zoom
+                  {t('landing.consultation.duration')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
-                  <h4 className="font-semibold mb-3">Wat je krijgt:</h4>
+                  <h4 className="font-semibold mb-3">{t('landing.consultation.whatsIncluded')}</h4>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm">Live demo van het platform</span>
+                      <span className="text-sm">{t('landing.consultation.includes.demo')}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm">Pricing advies op maat</span>
+                      <span className="text-sm">{t('landing.consultation.includes.pricing')}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm">Setup tips en best practices</span>
+                      <span className="text-sm">{t('landing.consultation.includes.setupTips')}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm">Antwoord op al je vragen</span>
+                      <span className="text-sm">{t('landing.consultation.includes.questions')}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm">Hulp bij eerste accommodatie instellen</span>
+                      <span className="text-sm">{t('landing.consultation.includes.firstProperty')}</span>
                     </li>
                   </ul>
                 </div>
                 <Button size="lg" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
                   <Calendar className="h-5 w-5 mr-2" />
-                  Kies datum & tijd
+                  {t('landing.consultation.cta')}
                 </Button>
                 <p className="text-xs text-center text-muted-foreground">
-                  Geen verplichtingen. Gewoon kennismaken en kijken of CheckinLynk bij je past.
+                  {t('landing.consultation.disclaimer')}
                 </p>
               </CardContent>
             </Card>
@@ -679,7 +680,7 @@ export default function Landing() {
             <div>
               <Card>
                 <CardHeader>
-                  <CardTitle>Selecteer een datum</CardTitle>
+                  <CardTitle>{t('landing.consultation.selectDate')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {/* Simple calendar placeholder */}
@@ -688,14 +689,22 @@ export default function Landing() {
                       <Button variant="ghost" size="sm">
                         <ChevronDown className="h-4 w-4 rotate-90" />
                       </Button>
-                      <div className="font-semibold">Maart 2025</div>
+                      <div className="font-semibold">{t('landing.consultation.calendarTitle')}</div>
                       <Button variant="ghost" size="sm">
                         <ChevronDown className="h-4 w-4 -rotate-90" />
                       </Button>
                     </div>
 
                     <div className="grid grid-cols-7 gap-2 text-center text-sm mb-2">
-                      {['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'].map(day => (
+                      {[
+                        t('landing.consultation.weekdays.mon'),
+                        t('landing.consultation.weekdays.tue'),
+                        t('landing.consultation.weekdays.wed'),
+                        t('landing.consultation.weekdays.thu'),
+                        t('landing.consultation.weekdays.fri'),
+                        t('landing.consultation.weekdays.sat'),
+                        t('landing.consultation.weekdays.sun')
+                      ].map(day => (
                         <div key={day} className="text-muted-foreground font-medium">{day}</div>
                       ))}
                     </div>
@@ -717,7 +726,7 @@ export default function Landing() {
                     </div>
 
                     <div className="mt-6">
-                      <h4 className="font-semibold mb-3 text-sm">Beschikbare tijden (CET)</h4>
+                      <h4 className="font-semibold mb-3 text-sm">{t('landing.consultation.availableTimes')}</h4>
                       <div className="grid grid-cols-3 gap-2">
                         {['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'].map(time => (
                           <button
@@ -742,10 +751,10 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-coral-100 text-coral-700 dark:bg-coral-900 dark:text-coral-300 border-coral-200 dark:border-coral-800">
-              Reviews
+              {t('landing.testimonials.badge')}
             </Badge>
             <h2 className="text-3xl lg:text-5xl font-bold mb-4">
-              Wat zeggen andere hosts?
+              {t('landing.testimonials.title')}
             </h2>
           </div>
 
@@ -776,14 +785,15 @@ export default function Landing() {
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-gradient-to-r from-coral-500 to-coral-600 text-white border-0">
               <Rocket className="h-3 w-3 mr-1" />
-              Early Access
+              {t('landing.earlyAccess.badge')}
             </Badge>
             <h2 className="text-3xl lg:text-5xl font-bold mb-4">
-              Word één van de eerste CheckinLynk-hosts
+              {t('landing.earlyAccess.title')}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Schrijf je in voor het testprogramma en help ons CheckinLynk te verbeteren.
-              Als early adopter krijg je <strong className="text-foreground">3 maanden gratis</strong> en prioritaire support tijdens je onboarding.
+              {t('landing.earlyAccess.subtitle')}
+              <strong className="text-foreground">{t('landing.earlyAccess.freeMonths')}</strong>
+              {t('landing.earlyAccess.subtitleAfter')}
             </p>
           </div>
 
@@ -793,9 +803,9 @@ export default function Landing() {
                 <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-coral-500 to-coral-600 flex items-center justify-center mb-4">
                   <Zap className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="text-lg font-bold mb-2">3 maanden gratis</h3>
+                <h3 className="text-lg font-bold mb-2">{t('landing.earlyAccess.benefit1.title')}</h3>
                 <p className="text-muted-foreground">
-                  Test CheckinLynk zonder risico en betaal pas na de proefperiode.
+                  {t('landing.earlyAccess.benefit1.description')}
                 </p>
               </CardContent>
             </Card>
@@ -805,9 +815,9 @@ export default function Landing() {
                 <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-coral-500 to-coral-600 flex items-center justify-center mb-4">
                   <HeadphonesIcon className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="text-lg font-bold mb-2">Snelle onboarding</h3>
+                <h3 className="text-lg font-bold mb-2">{t('landing.earlyAccess.benefit2.title')}</h3>
                 <p className="text-muted-foreground">
-                  We zetten samen je eerste accommodatie live in minder dan 30 minuten.
+                  {t('landing.earlyAccess.benefit2.description')}
                 </p>
               </CardContent>
             </Card>
@@ -817,9 +827,9 @@ export default function Landing() {
                 <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-coral-500 to-coral-600 flex items-center justify-center mb-4">
                   <Lightbulb className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="text-lg font-bold mb-2">Invloed op de roadmap</h3>
+                <h3 className="text-lg font-bold mb-2">{t('landing.earlyAccess.benefit3.title')}</h3>
                 <p className="text-muted-foreground">
-                  Jouw feedback bepaalt welke features we als volgende bouwen.
+                  {t('landing.earlyAccess.benefit3.description')}
                 </p>
               </CardContent>
             </Card>
@@ -828,32 +838,32 @@ export default function Landing() {
           <div className="max-w-3xl mx-auto">
             <Card className="border-2 border-primary/20 shadow-xl">
               <CardHeader className="text-center pb-6">
-                <CardTitle className="text-2xl">Schrijf je in voor het testprogramma</CardTitle>
+                <CardTitle className="text-2xl">{t('landing.earlyAccess.form.title')}</CardTitle>
                 <CardDescription>
-                  Vul je gegevens in en we nemen binnen 24 uur contact met je op
+                  {t('landing.earlyAccess.form.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label htmlFor="name" className="text-sm font-medium">
-                      Naam *
+                      {t('landing.earlyAccess.form.nameLabel')}
                     </label>
                     <Input
                       id="name"
-                      placeholder="Je volledige naam"
+                      placeholder={t('landing.earlyAccess.form.namePlaceholder')}
                       value={earlyAccessFormData.name}
                       onChange={(e) => setEarlyAccessFormData({ ...earlyAccessFormData, name: e.target.value })}
                     />
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="email" className="text-sm font-medium">
-                      E-mail *
+                      {t('landing.earlyAccess.form.emailLabel')}
                     </label>
                     <Input
                       id="email"
                       type="email"
-                      placeholder="je@email.com"
+                      placeholder={t('landing.earlyAccess.form.emailPlaceholder')}
                       value={earlyAccessFormData.email}
                       onChange={(e) => setEarlyAccessFormData({ ...earlyAccessFormData, email: e.target.value })}
                     />
@@ -863,29 +873,29 @@ export default function Landing() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label htmlFor="accommodations" className="text-sm font-medium">
-                      Aantal accommodaties *
+                      {t('landing.earlyAccess.form.accommodationsLabel')}
                     </label>
                     <Select
                       value={earlyAccessFormData.accommodations}
                       onValueChange={(value) => setEarlyAccessFormData({ ...earlyAccessFormData, accommodations: value })}
                     >
                       <SelectTrigger id="accommodations">
-                        <SelectValue placeholder="Selecteer aantal" />
+                        <SelectValue placeholder={t('landing.earlyAccess.form.accommodationsPlaceholder')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="1-3">1-3 accommodaties</SelectItem>
-                        <SelectItem value="4-10">4-10 accommodaties</SelectItem>
-                        <SelectItem value="11+">11+ accommodaties</SelectItem>
+                        <SelectItem value="1-3">{t('landing.earlyAccess.form.accommodationsOption1')}</SelectItem>
+                        <SelectItem value="4-10">{t('landing.earlyAccess.form.accommodationsOption2')}</SelectItem>
+                        <SelectItem value="11+">{t('landing.earlyAccess.form.accommodationsOption3')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="city" className="text-sm font-medium">
-                      Stad/Regio
+                      {t('landing.earlyAccess.form.cityLabel')}
                     </label>
                     <Input
                       id="city"
-                      placeholder="Bijvoorbeeld: Amsterdam"
+                      placeholder={t('landing.earlyAccess.form.cityPlaceholder')}
                       value={earlyAccessFormData.city}
                       onChange={(e) => setEarlyAccessFormData({ ...earlyAccessFormData, city: e.target.value })}
                     />
@@ -897,11 +907,11 @@ export default function Landing() {
                   className="w-full bg-gradient-to-r from-coral-500 to-coral-600 text-white hover:from-coral-600 hover:to-coral-700 mt-6"
                 >
                   <Rocket className="h-5 w-5 mr-2" />
-                  Aanmelden (3 maanden gratis)
+                  {t('landing.earlyAccess.form.submit')}
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground mt-4">
-                  Beperkte plaatsen. Geen verplichtingen. Opzeggen kan altijd.
+                  {t('landing.earlyAccess.form.disclaimer')}
                 </p>
               </CardContent>
             </Card>
@@ -913,7 +923,7 @@ export default function Landing() {
                 onClick={() => scrollToSection('features')}
               >
                 <ArrowRight className="h-4 w-4 mr-2" />
-                Bekijk hoe het werkt
+                {t('landing.earlyAccess.form.ctaSecondary')}
               </Button>
             </div>
           </div>
@@ -925,10 +935,10 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-5xl font-bold mb-4">
-              Veelgestelde vragen
+              {t('landing.faq.title')}
             </h2>
             <p className="text-xl text-muted-foreground">
-              Alles wat je moet weten over CheckinLynk
+              {t('landing.faq.subtitle')}
             </p>
           </div>
 
@@ -963,38 +973,38 @@ export default function Landing() {
       <section className="py-20 bg-gradient-to-br from-coral-50 via-white to-orange-50 dark:from-coral-950/20 dark:via-background dark:to-orange-950/20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl lg:text-5xl font-bold mb-6">
-            Minder berichten. Meer rust.
+            {t('landing.finalCta.title')}
             <br />
             <span className="bg-gradient-to-r from-coral-500 to-coral-600 bg-clip-text text-transparent">
-              Betere gastenervaring.
+              {t('landing.finalCta.titleHighlight')}
             </span>
           </h2>
           <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Sluit je aan bij honderden hosts die hun gasteninformatie professioneel delen met CheckinLynk
+            {t('landing.finalCta.subtitle')}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button size="lg" onClick={() => scrollToSection('pricing')} className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg h-14 px-10">
               <Zap className="h-5 w-5 mr-2" />
-              Start gratis
+              {t('landing.hero.cta')}
             </Button>
             <Button size="lg" variant="outline" onClick={() => navigate('/login')} className="text-lg h-14 px-10">
-              Log in
+              {t('landing.nav.login')}
             </Button>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4 text-green-600 dark:text-green-400" />
-              <span>Veilige betaling via Polar</span>
+              <span>{t('landing.finalCta.feature1')}</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
-              <span>GDPR-ready</span>
+              <span>{t('landing.finalCta.feature2')}</span>
             </div>
             <div className="flex items-center gap-2">
               <MessageCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
-              <span>Support binnen 24u</span>
+              <span>{t('landing.finalCta.feature3')}</span>
             </div>
           </div>
         </div>
@@ -1007,38 +1017,38 @@ export default function Landing() {
             <div>
               <img src={logoImage} alt="CheckinLynk" className="h-8 mb-4" />
               <p className="text-sm text-muted-foreground">
-                Eén link voor alle gasteninformatie. Professioneler. Simpeler. Beter.
+                {t('landing.footer.tagline')}
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Product</h4>
+              <h4 className="font-semibold mb-4">{t('landing.footer.product')}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><button onClick={() => scrollToSection('features')} className="hover:text-foreground transition-colors">Features</button></li>
-                <li><button onClick={() => scrollToSection('pricing')} className="hover:text-foreground transition-colors">Pricing</button></li>
-                <li><button onClick={() => scrollToSection('consultation')} className="hover:text-foreground transition-colors">Demo</button></li>
-                <li><button onClick={() => scrollToSection('faq')} className="hover:text-foreground transition-colors">FAQ</button></li>
+                <li><button onClick={() => scrollToSection('features')} className="hover:text-foreground transition-colors">{t('landing.nav.features')}</button></li>
+                <li><button onClick={() => scrollToSection('pricing')} className="hover:text-foreground transition-colors">{t('landing.nav.pricing')}</button></li>
+                <li><button onClick={() => scrollToSection('consultation')} className="hover:text-foreground transition-colors">{t('landing.nav.demo')}</button></li>
+                <li><button onClick={() => scrollToSection('faq')} className="hover:text-foreground transition-colors">{t('landing.nav.faq')}</button></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Bedrijf</h4>
+              <h4 className="font-semibold mb-4">{t('landing.footer.company')}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">Over ons</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Contact</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Privacy</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Voorwaarden</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">{t('landing.footer.about')}</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">{t('landing.footer.contact')}</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">{t('landing.footer.privacy')}</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">{t('landing.footer.terms')}</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Account</h4>
+              <h4 className="font-semibold mb-4">{t('landing.footer.account')}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><button onClick={() => navigate('/login')} className="hover:text-foreground transition-colors">Log in</button></li>
-                <li><button onClick={() => scrollToSection('pricing')} className="hover:text-foreground transition-colors">Registreer</button></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Support</a></li>
+                <li><button onClick={() => navigate('/login')} className="hover:text-foreground transition-colors">{t('landing.nav.login')}</button></li>
+                <li><button onClick={() => scrollToSection('pricing')} className="hover:text-foreground transition-colors">{t('landing.nav.register')}</button></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">{t('landing.footer.support')}</a></li>
               </ul>
             </div>
           </div>
           <div className="pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            © 2025 CheckinLynk. Alle rechten voorbehouden.
+            {t('landing.footer.copyright')}
           </div>
         </div>
       </footer>
