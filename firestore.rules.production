@@ -1,0 +1,37 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // PRODUCTION RULES - Secure and restrictive
+    
+    // Properties - Only property owners can manage their properties
+    match /properties/{propertyId} {
+      allow read: if true; // Public read for guest access via unique links
+      allow create: if request.auth != null && 
+                      request.resource.data.ownerId == request.auth.uid;
+      allow update, delete: if request.auth != null && 
+                             resource.data.ownerId == request.auth.uid;
+    }
+    
+    // Content Blocks - Only property owners can manage content blocks
+    match /contentBlocks/{blockId} {
+      allow read: if true; // Public read for guest access
+      allow create: if request.auth != null && 
+                      exists(/databases/$(database)/documents/properties/$(request.resource.data.propertyId)) &&
+                      get(/databases/$(database)/documents/properties/$(request.resource.data.propertyId)).data.ownerId == request.auth.uid;
+      allow update, delete: if request.auth != null && 
+                             exists(/databases/$(database)/documents/properties/$(resource.data.propertyId)) &&
+                             get(/databases/$(database)/documents/properties/$(resource.data.propertyId)).data.ownerId == request.auth.uid;
+    }
+    
+    // Guest Registrations - Public creation, owner management
+    match /guestRegistrations/{registrationId} {
+      allow read: if true;
+      allow create: if true; // Anyone can register as a guest
+      allow update, delete: if request.auth != null && 
+                             exists(/databases/$(database)/documents/properties/$(resource.data.propertyId)) &&
+                             get(/databases/$(database)/documents/properties/$(resource.data.propertyId)).data.ownerId == request.auth.uid;
+    }
+  }
+}

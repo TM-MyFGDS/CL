@@ -1,0 +1,28 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // DEVELOPMENT MODE - Allow authenticated users full access
+    // TODO: Tighten these rules for production
+    
+    match /properties/{propertyId} {
+      allow read: if true; // Public read for guest access
+      allow write: if request.auth != null; // Any authenticated user can write
+    }
+    
+    match /contentBlocks/{blockId} {
+      allow read: if true; // Public read for guest access
+      allow write: if request.auth != null; // Any authenticated user can write
+    }
+    
+    match /guestRegistrations/{registrationId} {
+      allow read, write: if true; // Public access for guest registration
+    }
+    
+    match /users/{userId} {
+      allow read: if request.auth != null; // Authenticated users can read profiles
+      allow write: if request.auth != null && request.auth.uid == userId; // Users can only update their own profile
+    }
+  }
+}
